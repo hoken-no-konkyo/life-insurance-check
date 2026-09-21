@@ -244,8 +244,8 @@ label > select{
  <input id="propertyTaxAnnual" type="number" min="0" step="0.1" value="0"></label>
 </div>
 
-<label>万一後も残る住居費（万円／月）
-<small>団信後の管理費・修繕費、または万一後も続く家賃など。固定資産税・都市計画税は上の年間額から別に計算するため、ここには含めません。</small>
+<label>万一後も残るその他の住居費（万円／月）
+<small>住宅ローン返済額はここには入れません。管理費・修繕積立金、または万一後も続く家賃などを入力します。固定資産税・都市計画税も上の年間額から別に計算します。</small>
 <input id="housing" type="number" min="0" step="0.1" value="0"></label>
 </section>
 
@@ -359,7 +359,7 @@ label > select{
 <section class="card result" id="result" style="display:none"><h2>診断結果</h2><div class="muted">現在の保障・資産などを差し引いた</div><div class="big"><span id="need">0</span>万円</div>
 <div id="coverageStatus" class="status"></div>
 <div class="kpis"><div class="kpi"><small>必要資金総額</small><strong><span id="totalNeed">0</span>万円</strong></div><div class="kpi"><small>準備済み・見込めるお金</small><strong><span id="totalOffset">0</span>万円</strong></div></div>
-<div id="familyLogic" class="notice"></div><div class="section">必要なお金</div><div class="row"><span>生活費</span><b><span id="rl"></span>万円</b></div><div class="row"><span>教育費</span><b><span id="re"></span>万円</b></div><div id="edetail"></div><div class="row"><span>住居費</span><b><span id="rh"></span>万円</b></div><div class="row"><span>葬儀・身辺整理費</span><b><span id="ro"></span>万円</b></div><div class="section">差し引けるお金</div><div class="row"><span>配偶者収入</span><b>▲<span id="rsp"></span>万円</b></div><div class="row"><span>配偶者自身の老齢年金（65歳以降・入力額ベース）</span><b>▲<span id="rsop"></span>万円</b></div><div class="row"><span>遺族基礎年金</span><b>▲<span id="rb"></span>万円</b></div><div class="row"><span>遺族厚生年金（概算）</span><b>▲<span id="rk"></span>万円</b></div><div class="row"><span>中高齢寡婦加算（該当時・概算）</span><b>▲<span id="rw"></span>万円</b></div><div class="row"><span>児童手当（今後・概算）</span><b>▲<span id="rca"></span>万円</b></div>
+<div id="familyLogic" class="notice"></div><div class="section">必要なお金</div><div class="row"><span>生活費</span><b><span id="rl"></span>万円</b></div><div class="row"><span>教育費</span><b><span id="re"></span>万円</b></div><div id="edetail"></div><div class="row"><span>住居費</span><b><span id="rh"></span>万円</b></div><div class="muted" id="housingBreakdown" style="margin:-4px 0 10px 14px;font-size:12px"></div><div class="row"><span>葬儀・身辺整理費</span><b><span id="ro"></span>万円</b></div><div class="section">差し引けるお金</div><div class="row"><span>配偶者収入</span><b>▲<span id="rsp"></span>万円</b></div><div class="row"><span>配偶者自身の老齢年金（65歳以降・入力額ベース）</span><b>▲<span id="rsop"></span>万円</b></div><div class="row"><span>遺族基礎年金</span><b>▲<span id="rb"></span>万円</b></div><div class="row"><span>遺族厚生年金（概算）</span><b>▲<span id="rk"></span>万円</b></div><div class="row"><span>中高齢寡婦加算（該当時・概算）</span><b>▲<span id="rw"></span>万円</b></div><div class="row"><span>児童手当（今後・概算）</span><b>▲<span id="rca"></span>万円</b></div>
 <div class="row"><span>児童扶養手当（確認済み額から計算）</span><b>▲<span id="rjfa"></span>万円</b></div>
 <div class="row"><span>養育費・その他の継続収入</span><b>▲<span id="rotherinc"></span>万円</b></div>
 <div class="row"><span>資産</span><b>▲<span id="ra"></span>万円</b></div><div class="row"><span>死亡保険金</span><b>▲<span id="ri"></span>万円</b></div><div class="row"><span>死亡退職金等</span><b>▲<span id="rr"></span>万円</b></div>
@@ -707,7 +707,33 @@ function life(){
  return 0;
 }
 function et(){let t=0;for(let i=1;i<=N('kc');i++)t+=eduRemaining(i);return t}
-function house(){let survivors=(N('hasSp')===1||N('kc')>0);if(!survivors)return 0;let total=N('hasSp')?Math.max(0,lifeEndAge()-lifeBaseAge()):indY(),rec=N('housing')*12*total;let tax=($('home').value==='rent'?0:N('propertyTaxAnnual')*total);if($('home').value!=='loan')return rec+tax;if($('danshin').value==='yes')return N('loan')*(1-N('shareVal')/100)+rec+tax;return N('loan')+rec+tax}
+function housingYearsRemaining(){
+ let survivors=(N('hasSp')===1||N('kc')>0); if(!survivors)return 0;
+ return N('hasSp')?Math.max(0,lifeEndAge()-lifeBaseAge()):Math.max(0,indY());
+}
+function mortgageBalanceAfterDeath(){
+ if($('home').value!=='loan')return 0;
+ let balance=Math.max(0,N('loan'));
+ if($('danshin').value==='yes'){
+   let headShare=Math.max(0,Math.min(100,N('shareVal')))/100;
+   return balance*(1-headShare);
+ }
+ // 団信なし・不明は保守的に全残高が残る前提
+ return balance;
+}
+function house(){
+ let years=housingYearsRemaining(); if(years<=0)return 0;
+ let recurring=Math.max(0,N('housing'))*12*years;
+ let tax=$('home').value==='rent'?0:Math.max(0,N('propertyTaxAnnual'))*years;
+ let loan=mortgageBalanceAfterDeath();
+ return loan+recurring+tax;
+}
+function housingBreakdownText(){
+ let years=housingYearsRemaining(), loan=mortgageBalanceAfterDeath();
+ let recurring=Math.max(0,N('housing'))*12*years;
+ let tax=$('home').value==='rent'?0:Math.max(0,N('propertyTaxAnnual'))*years;
+ return `ローン残高 ${F(loan)}万円 ＋ その他の住居費 ${F(recurring)}万円 ＋ 固定資産税等 ${F(tax)}万円`;
+}
 function netRateValue(){let v=$('netRate')?.value||'0.75';return v==='custom'?Math.max(0,Math.min(1,N('netRateCustom')/100)):Number(v)}
 function spouseAfterAnnualNet(){
  if(N('hasSp')!==1)return 0;
@@ -1085,11 +1111,13 @@ function futureNeedAt(years){
    let total=hasSp
      ?($('lifeModeVal').value==='custom'?Math.max(0,N('until')-(N('spAge')+years)):Math.max(0,lifeExp(N('spAge')+years,$('spSex').value)))
      :remChild;
-   let rec=N('housing')*12*total;
+   let rec=Math.max(0,N('housing'))*12*total;
+   let tax=$('home').value==='rent'?0:Math.max(0,N('propertyTaxAnnual'))*total;
    if($('home').value==='loan'){
      let loanRem=Math.max(0,N('loan')*(1-years/35));
-     housing=($('danshin').value==='yes'?loanRem*(1-N('shareVal')/100):loanRem)+rec;
-   }else housing=rec;
+     let share=Math.max(0,Math.min(100,N('shareVal')))/100;
+     housing=($('danshin').value==='yes'?loanRem*(1-share):loanRem)+rec+tax;
+   }else housing=rec+tax;
  }
 
  let other=N('funeral');
@@ -1179,6 +1207,7 @@ function calc(){
    calcStage='診断結果の内訳';jumpId='age';
    let z={need,rl:l,re:e,rh:h,ro:o,rsp:spv,rsop:sop,rb:b,rk:k,rw:w,rca:ca,rjfa:jfa,rotherinc:ci,ra:a,ri:ins,rr:ret};
    Object.entries(z).forEach(([id,v])=>{if($(id))$(id).textContent=F(v)});
+   if($('housingBreakdown'))$('housingBreakdown').textContent=housingBreakdownText();
    let d='';for(let x=1;x<=N('kc');x++)d+=educationDetailHtml(x);
    if($('edetail'))$('edetail').innerHTML=d;
    if($('result')){$('result').style.display='block';$('result').scrollIntoView({behavior:'smooth',block:'start'})}
