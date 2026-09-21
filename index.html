@@ -60,7 +60,9 @@ label > select{
   .hero,.card{padding:14px;border-radius:15px}
   .child{padding:11px}
   label,.q,small,p,.notice,.warn,.row,.sourcebox{overflow-wrap:anywhere;word-break:normal}
-  label select,.edu-dynamic select,#spAfterMode{width:100%!important;max-width:100%!important;min-width:0;font-size:16px;padding:12px 34px 12px 11px}
+  label select{width:190px!important;max-width:100%!important;min-width:0;font-size:16px;padding:12px 34px 12px 11px}
+  #work{width:235px!important}
+  #spAfterMode,.edu-dynamic select{width:100%!important;max-width:100%!important}
   select{white-space:normal;text-overflow:clip}
   .residence-radio-row,.choice-radio-row{flex-wrap:wrap!important;gap:8px 14px}
   .residence-radio,.choice-radio{white-space:normal;line-height:1.35;font-size:13px;max-width:100%}
@@ -80,7 +82,7 @@ label > select{
 .age-badge{display:inline-block;margin-top:7px;padding:5px 10px;border-radius:8px;background:#f2f6f5;font-weight:700}
 </style>
 <style>
-/* Ver.24.12: living-cost choice/result visibility */
+/* Ver.24.13: living-cost choice/result visibility */
 .living-main{margin-top:12px;padding:14px 16px;border-radius:12px;background:#fff8d9;border:1px solid #eadca1;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .living-main span{font-weight:700}
 .living-main strong{font-size:22px;white-space:nowrap}
@@ -94,7 +96,7 @@ label > select{
 }
 </style>
 </head><body><main>
-<div class="brand">📖🌱 ホケンの根拠</div><section class="hero"><b>商品化検証版 Ver.24.12</b><h1>わが家の必要保障額診断</h1><p class="muted">必要なお金と、家族に残るお金を整理して不足保障額の目安を計算します。</p><div class="notice"><b>入力内容は保存・外部送信しません。</b> 計算はこのページ内だけで行います。</div></section>
+<div class="brand">📖🌱 ホケンの根拠</div><section class="hero"><b>商品化検証版 Ver.24.13</b><h1>わが家の必要保障額診断</h1><p class="muted">必要なお金と、家族に残るお金を整理して不足保障額の目安を計算します。</p><div class="notice"><b>入力内容は保存・外部送信しません。</b> 計算はこのページ内だけで行います。</div></section>
 
 <section class="card"><h2>① 家族</h2>
 <label>世帯主の年齢<input id="age" type="number" min="18" max="99" value="40"></label><label>世帯主の性別<select id="headSex"><option value="male">男性</option><option value="female">女性</option></select></label><label>働き方<select id="work">
@@ -140,8 +142,7 @@ label > select{
 <div class="notice">配偶者がいない場合に、お子さんの現在の家計に入っている児童扶養手当・養育費を確認します。</div>
 <input id="singleParent" type="hidden" value="no">
 <div id="singleParentBox" class="hidden">
- <label><div class="note" style="margin:8px 0 14px"><b>金額はすべて「万円」で入力します。</b><br>例：5万円 →「5」／4万8,000円 →「4.8」／5,000円 →「0.5」</div>
-現在、児童扶養手当を受け取っていますか？
+ <label>現在、児童扶養手当を受け取っていますか？
  <select id="jfaStatus" onchange="refreshSingleParentIncomeUI();updateLivingCalc()"><option value="unknown">分からない</option><option value="receiving">はい</option><option value="none">いいえ</option></select></label>
  <div id="jfaAmountBox" class="hidden">
  <div class="notice"><b>児童扶養手当は「月額」に直して生活費へ反映します。</b><br>
@@ -219,8 +220,14 @@ label > select{
  <label>現在の管理費・修繕積立等（月額・万円）<input id="ownedMonthlyCost" type="number" min="0" step="0.1" value="0"></label>
 </div>
 
+<div id="propertyTaxBox">
+ <label>固定資産税・都市計画税（年間・万円）
+ <small>持ち家の場合に入力します。納税通知書などの年間額を目安にしてください。都市計画税がかかる場合は合計額を入力します。</small>
+ <input id="propertyTaxAnnual" type="number" min="0" step="0.1" value="0"></label>
+</div>
+
 <label>万一後も残る住居費（万円／月）
-<small>団信後の管理費・修繕費、または万一後も続く家賃など。現在と同じでよければ現在額を目安に入力してください。</small>
+<small>団信後の管理費・修繕費、または万一後も続く家賃など。固定資産税・都市計画税は上の年間額から別に計算するため、ここには含めません。</small>
 <input id="housing" type="number" min="0" step="0.1" value="0"></label>
 </section>
 
@@ -574,14 +581,15 @@ function draw(){
 function currentHousingAnnual(){
  let h=$('home')?.value;
  if(h==='rent')return N('rentMonthly')*12;
- if(h==='owned')return N('ownedMonthlyCost')*12;
- return N('mortgageMonthly')*12+N('mortgageBonusAnnual');
+ if(h==='owned')return N('ownedMonthlyCost')*12+N('propertyTaxAnnual');
+ return N('mortgageMonthly')*12+N('mortgageBonusAnnual')+N('propertyTaxAnnual');
 }
 function homeUI(){
  let h=$('home')?.value;
  $('loanCurrentBox')?.classList.toggle('hidden',h!=='loan');
  $('rentCurrentBox')?.classList.toggle('hidden',h!=='rent');
  $('ownedCurrentBox')?.classList.toggle('hidden',h!=='owned');
+ $('propertyTaxBox')?.classList.toggle('hidden',h==='rent');
  danUI();updateLivingCalc();
 }
 function danUI(){
@@ -681,7 +689,7 @@ function life(){
  return 0;
 }
 function et(){let t=0;for(let i=1;i<=N('kc');i++)t+=eduRemaining(i);return t}
-function house(){let survivors=(N('hasSp')===1||N('kc')>0);if(!survivors)return 0;let total=N('hasSp')?Math.max(0,lifeEndAge()-lifeBaseAge()):indY(),rec=N('housing')*12*total;if($('home').value!=='loan')return rec;if($('danshin').value==='yes')return N('loan')*(1-N('shareVal')/100)+rec;return N('loan')+rec}
+function house(){let survivors=(N('hasSp')===1||N('kc')>0);if(!survivors)return 0;let total=N('hasSp')?Math.max(0,lifeEndAge()-lifeBaseAge()):indY(),rec=N('housing')*12*total;let tax=($('home').value==='rent'?0:N('propertyTaxAnnual')*total);if($('home').value!=='loan')return rec+tax;if($('danshin').value==='yes')return N('loan')*(1-N('shareVal')/100)+rec+tax;return N('loan')+rec+tax}
 function netRateValue(){let v=$('netRate')?.value||'0.75';return v==='custom'?Math.max(0,Math.min(1,N('netRateCustom')/100)):Number(v)}
 function spouseAfterAnnualNet(){
  if(N('hasSp')!==1)return 0;
@@ -1197,7 +1205,7 @@ document.addEventListener('change',e=>{
  if(/^(elem|mid|high|currentPost|post|grad|vocYears|residence)\d+$/.test(e.target.id||''))updateLivingCalc();
 });
 document.addEventListener('input',e=>{
- if(['headGrossIncome','spGrossIncome','spIncomeCustom','mortgageMonthly','mortgageBonusAnnual','rentMonthly','ownedMonthlyCost','netRateCustom','annualSavingNow','jfaConfirmedMonthly','jfaDepositAmount','supportMonthly','otherCurrentMonthly','educationNowOverride'].includes(e.target.id))updateLivingCalc();
+ if(['headGrossIncome','spGrossIncome','spIncomeCustom','mortgageMonthly','mortgageBonusAnnual','rentMonthly','ownedMonthlyCost','propertyTaxAnnual','netRateCustom','annualSavingNow','jfaConfirmedMonthly','jfaDepositAmount','supportMonthly','otherCurrentMonthly','educationNowOverride'].includes(e.target.id))updateLivingCalc();
 });
 setTimeout(()=>{homeUI();spouseAfterUI();updateJfaInputUI();updateLivingCalc();},0);
 
