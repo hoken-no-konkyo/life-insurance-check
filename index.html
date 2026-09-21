@@ -1,0 +1,1173 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>ホケンの根拠｜必要保障額診断</title>
+<style>
+:root{--n:#11354d;--g:#19765b;--bg:#f5f7f6;--ln:#dbe4e0;--y:#fff7d8;--m:#68757d;--b:#eef6fb}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;color:#17252e}main{max-width:680px;margin:auto;padding:18px 14px 70px}.brand{font-weight:900;color:var(--n);font-size:19px}.hero,.card{background:#fff;border:1px solid var(--ln);border-radius:18px;padding:18px;margin:13px 0}.hero{background:linear-gradient(145deg,#fff,#edf8f3)}h1{font-size:26px;color:var(--n);margin:8px 0}h2{font-size:19px;color:var(--g);margin:0 0 14px}h3{font-size:16px;color:var(--n);margin:0}.muted,small{color:var(--m)}small{display:block;font-size:12px;line-height:1.45;margin-top:4px}label,.q{display:block;font-weight:750;margin:14px 0 7px}input,select{width:100%;padding:14px;font-size:16px;border:1px solid #cbd7d2;border-radius:11px;background:var(--y)}.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.choices.two{grid-template-columns:repeat(2,1fr)}.choices button{padding:13px 3px;border:1.5px solid #cbd7d2;border-radius:11px;background:#fff;color:var(--n);font-weight:850}.choices button.on{background:var(--g);color:#fff;border-color:var(--g)}.child{border:1.5px solid var(--ln);background:#fbfdfc;border-radius:14px;padding:14px;margin:12px 0}.head{display:flex;justify-content:space-between;align-items:center}.badge{background:var(--g);color:#fff;padding:5px 9px;border-radius:99px;font-size:12px;font-weight:900}.edu{background:var(--b);border-radius:11px;padding:10px;margin-top:10px}.notice{border-left:4px solid var(--g);background:#f7fbf9;border-radius:9px;padding:10px 12px;font-size:13px;line-height:1.55;margin-top:12px}.warn{background:#fff8e6;border:1px solid #eadba9;border-radius:10px;padding:10px;font-size:12px;line-height:1.55;margin-top:12px}.hidden{display:none!important}.primary{width:100%;padding:16px;border:0;border-radius:13px;background:var(--g);color:#fff;font-size:18px;font-weight:900}.result{display:none}.big{font-size:39px;font-weight:950;color:var(--n);margin:6px 0 15px}.row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--ln)}.row b{text-align:right}.section{font-weight:900;color:var(--g);margin-top:18px}
+
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:14px 0}.kpi{background:#f7faf9;border:1px solid var(--ln);border-radius:13px;padding:12px}.kpi small{margin:0}.kpi strong{display:block;font-size:22px;color:var(--n);margin-top:4px}.status{padding:13px;border-radius:12px;font-weight:850;margin:12px 0}.status.ok{background:#eef8f3;color:#146348}.status.ng{background:#fff2ee;color:#8b3b28}.chart{margin-top:15px}.barrow{margin:11px 0}.barlabel{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}.track{height:12px;background:#e8eeeb;border-radius:99px;overflow:hidden}.fill{height:100%;background:var(--g);border-radius:99px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}.secondary{padding:13px;border:1.5px solid var(--g);border-radius:12px;background:#fff;color:var(--g);font-weight:850}.sourcebox{font-size:12px;line-height:1.6;background:#f7f8f8;border-radius:10px;padding:11px;margin-top:14px}@media print{body{background:#fff}main{max-width:none}.hero,.card{break-inside:avoid}.primary,.actions{display:none!important}}
+
+/* compact numeric fields: easier to scan on mobile */
+input[type="number"]{max-width:190px}
+label input[type="number"]{display:block}
+@media(max-width:520px){input[type="number"]{max-width:155px}}
+
+/* Ver.13.4: stable vertical layout + restrained control widths */
+label input[type="number"]{
+  width:155px;
+  max-width:100%;
+}
+label select{
+  width:210px;
+  max-width:100%;
+}
+@media(max-width:420px){
+  label input[type="number"]{width:145px}
+  label select{width:190px}
+}
+
+/* Ver.13.5: labels on one line, input/select controls directly below */
+label > input,
+label > select{
+  display:block !important;
+  margin-top:7px;
+}
+
+.edu-dynamic label{margin-top:10px}.edu-dynamic select{max-width:330px!important}
+
+.input-error{border:2px solid #d93025!important;background:#fff4f4!important}
+.validation-summary{border:2px solid #d93025;background:#fff4f4;padding:12px 14px;border-radius:10px;margin-bottom:14px;color:#9b1c14}
+.validation-summary b{display:block;margin-bottom:4px}
+
+.error-jump{border:0;background:transparent;color:#b42318;text-decoration:underline;font-weight:700;padding:5px 0;cursor:pointer;text-align:left}
+
+.residence-radio-row{display:flex;align-items:center;gap:18px;flex-wrap:nowrap;margin-top:7px}
+.residence-radio{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer;font-size:14px;font-weight:500}
+.residence-radio input[type="radio"]{width:18px;height:18px;margin:0;accent-color:#173a63;cursor:pointer;flex:0 0 auto}
+@media(max-width:390px){.residence-radio-row{gap:9px}.residence-radio{font-size:12.5px}}
+
+.choice-radio-row{display:flex;align-items:center;gap:20px;flex-wrap:nowrap;margin-top:7px}
+.choice-radio{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer;font-size:14px;font-weight:500}
+.choice-radio input[type="radio"]{width:18px;height:18px;margin:0;accent-color:#173a63;cursor:pointer}
+.conditional-residence{margin-top:10px}
+</style><style>
+.birth-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.birth-row input{display:inline-block!important;margin:0!important;text-align:center}.birth-year{width:82px!important;min-width:82px!important}.birth-md{width:58px!important;min-width:58px!important}
+.age-badge{display:inline-block;margin-top:7px;padding:5px 10px;border-radius:8px;background:#f2f6f5;font-weight:700}
+</style></head><body><main>
+<div class="brand">📖🌱 ホケンの根拠</div><section class="hero"><b>商品化検証版 Ver.24.7</b><h1>わが家の必要保障額診断</h1><p class="muted">必要なお金と、家族に残るお金を整理して不足保障額の目安を計算します。</p><div class="notice"><b>入力内容は保存・外部送信しません。</b> 計算はこのページ内だけで行います。</div></section>
+
+<section class="card"><h2>① 家族</h2>
+<label>世帯主の年齢<input id="age" type="number" min="18" max="99" value="40"></label><label>世帯主の性別<select id="headSex"><option value="male">男性</option><option value="female">女性</option></select></label><label>働き方<select id="work">
+<option value="employee">会社員</option>
+<option value="public">公務員</option>
+<option value="part">パート・アルバイト</option>
+<option value="self">自営業・フリーランス</option>
+<option value="other">無職・その他</option>
+</select></label>
+<label>世帯主の現在の税込年収（万円）
+<small>源泉徴収票などに記載されている、おおよその税込年収を入力してください。</small>
+<input id="headGrossIncome" type="number" min="0" value="500"></label>
+<div class="q">現在、厚生年金に加入していますか？</div>
+<div class="choices" id="koseiJoin">
+ <button class="on" type="button" onclick="setKosei('yes',this)">はい</button>
+ <button type="button" onclick="setKosei('no',this)">いいえ</button>
+ <button type="button" onclick="setKosei('unknown',this)">わからない</button>
+</div>
+<input id="koseiJoinVal" type="hidden" value="yes">
+<div id="koseiDetail">
+<label>これまでの厚生年金加入期間（年）
+<small>これまで会社員・公務員などとして厚生年金に加入していた期間の合計。おおよそで構いません。</small>
+<input id="koseiYears" type="number" min="0" max="60" value="18"></label>
+<label>厚生年金加入期間中のおおよその平均年収（万円）
+<small>遺族厚生年金の概算に使います。現在の年収ではなく、厚生年金に加入していた期間全体のおおよその平均です。分からない場合は「現在の税込年収」を目安として使えます。</small>
+<input id="avgAnnualPay" type="number" min="0" value="500"></label>
+</div>
+<div class="q">配偶者</div><div class="choices two" id="spb"><button type="button" onclick="sp(1,this)">いる</button><button class="on" type="button" onclick="sp(0,this)">いない</button></div><input id="hasSp" type="hidden" value="0">
+<div id="spa" class="hidden"><label>配偶者の年齢<input id="spAge" type="number" min="1" max="99" inputmode="numeric" value="38" oninput="updateLifeHint()"></label>
+<label>配偶者の性別<select id="spSex" onchange="updateLifeHint()"><option value="female">女性</option><option value="male">男性</option></select></label>
+<label>配偶者の現在の税込年収（万円）<input id="spGrossIncome" type="number" min="0" value="120"></label>
+<label>万一後の配偶者収入
+<select id="spAfterMode"><option value="same">現在と同程度として概算</option><option value="custom">別の金額を入力</option><option value="none">0円になる</option></select></label>
+<div id="spAfterCustom" class="hidden"><label>万一後の配偶者の年間手取り収入（万円）<input id="spIncomeCustom" type="number" min="0" value="0"></label></div>
+<label>配偶者の退職予定年齢<input id="spRetire" type="number" value="65"></label>
+<label>配偶者の65歳以降の老齢年金見込額（年額・万円）
+<input id="spOldPension" type="number" min="0" step="0.1" value="0">
+<small>ねんきん定期便等で分かる場合に入力してください。分からない場合は0のままでも診断できます。</small></label></div>
+<div class="q">現在のお子さんの人数</div><div class="choices" id="kb"><button class="on" type="button" onclick="kids(0,this)">0人</button><button type="button" onclick="kids(1,this)">1人</button><button type="button" onclick="kids(2,this)">2人</button><button type="button" onclick="kids(3,this)">3人</button><button type="button" onclick="kids(4,this)">4人</button><button type="button" onclick="kids(5,this)">5人</button></div><input id="kc" type="hidden" value="0"><div id="ka"></div>
+</section>
+
+<section class="card" id="singleParentSection"><h2>② ひとり親世帯の現在の収入</h2>
+<div class="notice">配偶者がいない場合に、お子さんの現在の家計に入っている児童扶養手当・養育費を確認します。</div>
+<input id="singleParent" type="hidden" value="no">
+<div id="singleParentBox" class="hidden">
+ <label><div class="note" style="margin:8px 0 14px"><b>金額はすべて「万円」で入力します。</b><br>例：5万円 →「5」／4万8,000円 →「4.8」／5,000円 →「0.5」</div>
+現在、児童扶養手当を受け取っていますか？
+ <select id="jfaStatus" onchange="refreshSingleParentIncomeUI();updateLivingCalc()"><option value="unknown">分からない</option><option value="receiving">はい</option><option value="none">いいえ</option></select></label>
+ <div id="jfaAmountBox" class="hidden">
+ <div class="notice"><b>児童扶養手当は「月額」に直して生活費へ反映します。</b><br>
+ 原則、1・3・5・7・9・11月の奇数月に2か月分がまとめて支払われます。通知書などで月額が分かる場合は「月額」を、通帳の振込額しか分からない場合は「直近の振込額」を選んでください。</div>
+ <label>入力方法
+ <select id="jfaInputMode" onchange="updateJfaInputUI();updateLivingCalc()">
+   <option value="monthly">月額が分かる</option>
+   <option value="deposit">直近の振込額しか分からない</option>
+ </select></label>
+ <div id="jfaMonthlyBox">
+   <label>現在の児童扶養手当（月額・万円）
+   <input id="jfaConfirmedMonthly" type="number" oninput="updateLivingCalc()" min="0" value="0" step="0.1">
+   <small>例：月額48,050円なら「48050」と入力します。</small></label>
+ </div>
+ <div id="jfaDepositBox" class="hidden">
+   <label>直近の振込額（2か月分・万円）
+   <input id="jfaDepositAmount" type="number" oninput="updateJfaInputUI();updateLivingCalc()" min="0" value="0" step="0.1">
+   <small>通常の2か月分の振込額を「万円」で入力してください。例：10万円なら「10」。自動で÷2して月額に換算します。</small></label>
+   <div class="result"><div class="row"><span>月額換算</span><b><span id="jfaConvertedMonthly">0</span>円／月</b></div></div>
+ </div>
+</div>
+ <label>現在、養育費を受け取っていますか？
+ <select id="supportStatus" onchange="refreshSingleParentIncomeUI();updateLivingCalc()"><option value="no">いいえ</option><option value="yes">はい</option></select></label>
+ <div id="supportBox" class="hidden">
+  <label>現在の養育費（月額・万円）<input id="supportMonthly" type="number" oninput="updateLivingCalc()" min="0" value="0" step="0.1"></label>
+  <label>現在の取り決めでは、いつまで受け取る予定ですか？
+  <select id="supportEndType">
+   <option value="independence">子どもが経済的に独立するまで</option>
+   <option value="18">18歳まで</option><option value="20">20歳まで</option>
+   <option value="22">22歳年度末ごろまで</option><option value="custom">その他</option>
+  </select>
+  <small>養育費は18歳で必ず終了するものではありません。実際の取り決めに合わせてください。</small></label>
+  <label id="supportCustomLabel" class="hidden">あと何年間受け取る予定ですか？
+  <input id="supportCustomYears" type="number" min="0" max="30" value="0"></label>
+ </div>
+ <label>その他の現在の収入（月額・万円）
+<small>児童扶養手当・養育費以外で、現在の生活費に使っている定期的な収入があれば入力してください。例：仕送り、定期的な給付など。なければ0円。</small>
+<input id="otherCurrentMonthly" type="number" oninput="updateLivingCalc()" min="0" value="0" step="0.1"></label>
+<div class="result" style="margin-top:12px">
+ <div class="section">現在の世帯収入（額面ベース）</div>
+ <div class="row"><span>本人の税込年収</span><b><span id="grossEarnedAnnualDisplay">0</span>万円／年</b></div>
+ <div class="row"><span>児童扶養手当</span><b>＋<span id="jfaAnnualDisplay">0</span>万円／年</b></div>
+ <div class="row"><span>養育費</span><b>＋<span id="supportAnnualDisplay">0</span>万円／年</b></div>
+ <div class="row"><span>その他の定期収入</span><b>＋<span id="otherAnnualDisplay">0</span>万円／年</b></div>
+ <div class="row"><span><b>現在の世帯収入 合計</b></span><b><span id="grossHouseholdAnnualDisplay">0</span>万円／年</b></div>
+ <small>ここでは収入の全体像を確認します。現在の生活費は最後の「現在の生活費」で、給与部分だけを手取り換算し、住宅費・教育費・貯蓄を差し引いて計算します。</small>
+</div>
+
+<div class="notice"><b>生活費への反映：</b>最後の「現在の生活費」で、給与部分だけを手取り換算し、児童扶養手当・養育費・その他収入はそのまま加えます。<br><b>死亡後の収入とは別です。</b>これらは世帯主死亡後も続くとは限らないため、必要保障額からは自動控除しません。</div>
+<div class="notice"><b>重要：</b>児童扶養手当と養育費は現在の家計収入には含めますが、世帯主死亡後の収入としては自動で差し引きません。</div>
+</div>
+<div id="notSingleParentNote" class="notice">配偶者がいるため、ひとり親家庭向けの入力項目は表示していません。</div>
+</section>
+
+<section class="card hidden"><h2>③ 子どもの教育</h2><div id="ea"></div></section>
+
+<section class="card"><h2>④ 住まい</h2>
+<label>住まい
+<select id="home"><option value="loan">持ち家・住宅ローンあり</option><option value="owned">持ち家・ローンなし</option><option value="rent">賃貸</option></select></label>
+
+<div id="loanCurrentBox">
+ <label>住宅ローン残高（万円）<input id="loan" type="number" min="0" value="1800"></label>
+ <label>毎月の住宅ローン返済額（万円）<input id="mortgageMonthly" type="number" min="0" step="0.1" value="6"></label>
+ <label>年間のボーナス返済額（万円）<input id="mortgageBonusAnnual" type="number" min="0" step="0.1" value="0"></label>
+ <label>団信<small>世帯主の死亡時に住宅ローンが返済される契約かを選択。</small>
+ <select id="danshin"><option value="yes">加入している</option><option value="no">加入していない</option><option value="unknown">わからない</option></select></label>
+ <div id="share"><label>世帯主のローン負担割合<select id="shareVal"><option value="100">100％</option><option value="50">夫婦で半々（50％）</option></select></label></div>
+</div>
+
+<div id="rentCurrentBox" class="hidden">
+ <label>現在の家賃（月額・万円）<input id="rentMonthly" type="number" min="0" step="0.1" value="8"></label>
+</div>
+
+<div id="ownedCurrentBox" class="hidden">
+ <label>現在の管理費・修繕積立等（月額・万円）<input id="ownedMonthlyCost" type="number" min="0" step="0.1" value="0"></label>
+</div>
+
+<label>万一後も残る住居費（万円／月）
+<small>団信後の管理費・修繕費、または万一後も続く家賃など。現在と同じでよければ現在額を目安に入力してください。</small>
+<input id="housing" type="number" min="0" step="0.1" value="0"></label>
+</section>
+
+
+
+<section class="card"><h2>⑤ 葬儀・整理資金</h2><label>葬儀・身辺整理費（万円）
+<small>葬儀、お寺へのお布施・宗教者への謝礼、お墓・納骨・永代供養、遺品整理など、万一のときに必要になりそうな費用をまとめて入力します。お墓がすでにある場合、新たなお墓の費用は不要です。金額は地域・形式・宗派によって大きく異なるため、ご家庭の希望に合わせて見積もってください。</small>
+<input id="funeral" type="number" value="200"></label></section>
+
+<section class="card"><h2>⑥ 準備できるお金</h2><label>預貯金（万円）<input id="cash" type="number" value="500"></label><label>現在の運用資産残高（万円）<small>NISA・株式・投資信託など、現在保有している運用資産の合計額を入力してください。</small><input id="invest" type="number" value="200"></label><label>その他資産（万円）
+<small>土地・建物など、上記以外で万一の際に生活資金として使える資産があれば入力してください。不動産は購入価格ではなく、売却して現金化できるおおよその金額を目安にします。生活に必要で売却する予定のない自宅などは、無理に含めなくても構いません。</small>
+<input id="other" type="number" value="0"></label><label>現在加入している死亡保険の保障額（万円）<small>世帯主が現在亡くなった場合に受け取れる死亡保険金の合計額を入力してください。</small><input id="insurance" type="number" value="1000"></label><label>死亡退職金・弔慰金等（万円）<small>世帯主が現在亡くなった場合に勤務先などから支給される死亡退職金・弔慰金等。将来の通常退職時の退職金とは別。分からなければ0円。</small><input id="retire" type="number" value="0"></label></section>
+
+<section class="card"><h2>⑦ 子育て給付・その他の継続収入</h2>
+<div class="notice"><b>児童手当はお子さんの年齢・進路情報から自動で概算します。</b></div>
+<div class="result">
+ <div class="row"><span>現在の児童手当（月額・自動計算）</span><b><span id="caNow">0</span>円</b></div>
+ <div class="row"><span>今後の児童手当総額（概算）</span><b><span id="caTotal">0</span>万円</b></div>
+</div>
+<small>制度基準は2026年度。実際の受給資格・多子加算の判定は自治体等で確認してください。</small>
+</section>
+
+<section class="card"><h2>⑧ 公的保障</h2>
+<div class="notice"><b>ひとり親家庭にも対応</b><br>
+配偶者がいない場合も、お子さんの人数と年齢に応じて遺族基礎年金を年ごとに概算します。対象となるお子さんが年齢要件を外れると、その後の年金額も自動で変わります。</div>
+<div class="notice"><b>遺族年金は入力内容から自動で概算します。</b><br>「何年間受け取るか」を自分で入力する必要はありません。</div>
+<div id="kosei"></div>
+<small>※子の年齢要件は年齢入力から年単位で概算します。障害年金1級・2級に該当する子は20歳未満までとして概算します。誕生日と年度末の関係により実際の支給期間とは最大1年程度ずれる場合があります。</small>
+<div class="warn">遺族年金は2026年度の現行制度を基準にした概算です。遺族厚生年金は65歳以降に本人の老齢厚生年金との調整があるため、この診断では過大に差し引かないよう原則65歳までを計上します。実際の受給可否・金額は保険料納付要件、標準報酬、家族状況、再婚等で変わります。2028年4月以降は制度改正が予定されているため、制度改正後は計算ロジックの更新が必要です。</div>
+</section>
+
+<section class="card"><h2>⑨ 最後に、現在の生活費</h2>
+<p class="muted">ここまで入力した収入・住まい・お子さんの状況を自動で集計します。ここで同じ金額をもう一度入力する必要はありません。</p>
+
+<div class="q">生活費はどう計算しますか？</div>
+<div class="choices two" id="livingInputMode">
+ <button class="on" type="button" onclick="setLivingInput('auto',this)">自動計算</button>
+ <button type="button" onclick="setLivingInput('manual',this)">月額を直接入力</button>
+</div>
+<input id="livingInputModeVal" type="hidden" value="auto">
+
+<div id="livingAuto">
+ <label>税込年収からの手取り換算率
+ <select id="netRate"><option value="0.80">80％</option><option value="0.75" selected>75％</option><option value="0.70">70％</option><option value="custom">自分で設定</option></select></label>
+ <div id="netRateCustomBox" class="hidden"><label>手取り換算率（％）<input id="netRateCustom" type="number" min="40" max="100" value="75"></label></div>
+ <small>これは簡易計算です。税金・社会保険料・扶養状況などで実際の手取りは変わります。</small>
+
+ <div class="result" style="margin-top:14px">
+  <div class="row"><span>給与・事業等の推計手取り</span><b><span id="earnedNetDisplay">0</span>万円／年</b></div>
+  <div class="row"><span>児童扶養手当（現在）</span><b>＋<span id="jfaIncomeDisplay">0</span>万円／年（<span id="jfaMonthlyDisplay">0</span>円／月）</b></div>
+  <div class="row"><span>養育費（現在）</span><b>＋<span id="supportIncomeDisplay">0</span>万円／年（<span id="supportMonthlyDisplay">0</span>円／月）</b></div>
+  <div class="row"><span>その他の現在収入</span><b>＋<span id="otherCurrentIncomeDisplay">0</span>万円／年（<span id="otherMonthlyDisplay">0</span>円／月）</b></div>
+  <div class="row"><span>現在の家計収入 合計</span><b><span id="currentIncomeDisplay">0</span>万円／年（約<span id="currentIncomeMonthlyDisplay">0</span>円／月）</b></div>
+  <div class="row"><span>現在の住宅費</span><b>▲<span id="housingNowDisplay">0</span>万円／年</b></div>
+  <div class="row"><span>現在の教育費（統計目安）</span><b>▲<span id="educationNowDisplay">0</span>万円／年</b></div>
+  <div class="row"><span>年間の貯蓄・積立</span><b>▲<span id="savingNowDisplay">0</span>万円／年</b></div>
+ </div>
+ <label>現在の教育費を実額で上書き（万円／年・任意）
+ <small>空欄なら上の統計目安を使います。実際に家計から出ている年間教育費が分かる場合はこちらを優先します。</small>
+ <input id="educationNowOverride" type="number" min="0" step="0.1" placeholder="例：60"></label>
+
+ <label>年間の貯蓄・積立額（万円）
+ <small>預貯金、NISA・投資信託など、生活に使わず将来のために積み立てている金額。</small>
+ <input id="annualSavingNow" type="number" min="0" value="0"></label>
+
+ <div class="notice" style="margin-top:14px"><b>計算式</b><br>
+現在の生活費（月額）＝ 月の推計手取り ＋ 月の児童扶養手当 ＋ 月の養育費 ＋ 月のその他収入 − 月の住宅費 − 月の教育費 − 月の貯蓄・積立</div>
+ <div class="hero" style="margin-top:14px">
+  <div class="result" style="margin:12px 0">
+ <div class="section">現在の生活費の計算</div>
+ <div class="row"><span>世帯主等の税込年収</span><b><span id="livingSalaryGrossAnnual">0.0</span>万円／年</b></div>
+ <div class="row"><span>給与等の推計手取り</span><b><span id="livingSalaryTakehomeAnnual">0.0</span>万円／年</b></div>
+ <div class="row"><span>児童扶養手当</span><b>＋<span id="livingJfaAnnual">0.0</span>万円／年</b></div>
+ <div class="row"><span>養育費</span><b>＋<span id="livingSupportAnnual">0.0</span>万円／年</b></div>
+ <div class="row"><span>その他の定期収入</span><b>＋<span id="livingOtherAnnual">0.0</span>万円／年</b></div>
+ <div class="row"><span><b>現在の世帯年収</b></span><b><span id="livingHouseholdGrossAnnual">0.0</span>万円／年</b></div>
+ <div class="row"><span><b>実際に生活費に使える年間収入</b></span><b><span id="livingIncomeAnnual">0.0</span>万円／年</b></div>
+ <div class="row"><span><b>実際に生活費に使える月収</b></span><b><span id="livingIncomeMonthly">0.0</span>万円／月</b></div>
+ <div class="row"><span>住宅費</span><b>－<span id="livingHousingAnnual">0.0</span>万円／年</b></div>
+ <div class="row"><span>現在の教育費</span><b>－<span id="livingEducationAnnual">0.0</span>万円／年</b></div>
+ <div class="row"><span>貯蓄・積立</span><b>－<span id="livingSavingAnnual">0.0</span>万円／年</b></div>
+</div>
+<div class="row"><span>給与等の推計手取りから住宅費・教育費・貯蓄を引いた残額</span><b><span id="livingEarnedRemainder">0.0</span>万円／年</b></div>
+<div class="row"><span>児童扶養手当</span><b>＋<span id="livingJfaActual">0.0</span>万円／年</b></div>
+<div class="row"><span>養育費</span><b>＋<span id="livingSupportActual">0.0</span>万円／年</b></div>
+<div class="row"><span>その他の現在収入</span><b>＋<span id="livingOtherActual">0.0</span>万円／年</b></div>
+<div class="row"><span><b>現在の生活費</b></span><b><span id="livingCurrentAnnual">0.0</span>万円／年</b></div>
+<div style="font-size:12px;line-height:1.65;margin:8px 0">給与等の手取りから住宅費・教育費・貯蓄を差し引いた残額に、現在受け取っている児童扶養手当・養育費・その他収入を加えて、現在の生活費を推計します。</div>
+<small>自動計算された現在の生活費</small>
+  <div class="big" style="font-size:31px;margin:4px 0"><span id="livingAutoResult">0.0</span>万円／月</div>
+  <small>計算式：現在の推計手取り＋現在の手当等 − 住宅費 − 教育費 − 貯蓄・積立。住宅費と教育費を別枠で必要保障額に計上するため、ここでは差し引いています。</small>
+ </div>
+ <div id="livingCalcWarning" class="warn hidden"></div>
+</div>
+
+<div id="livingManual" class="hidden">
+ <label>現在の生活費（万円／月）
+ <small>住宅費・教育費・貯蓄を除いた金額を入力してください。</small>
+ <input id="livingManualValue" type="number" min="0" step="0.1" value="20"></label>
+</div>
+<input id="living" type="hidden" value="0">
+
+<div class="notice"><b>死亡後の生活費の計算</b><br>配偶者がいる場合は、末子独立までは現在の生活費の80％、その後は60％を目安にして計算します。配偶者がいない場合は、お子さんの独立まで80％で計算し、独立後は0円とします。</div>
+<div class="q">生活費を計算する期間</div>
+<div class="choices" id="lifeMode"><button class="on" type="button" onclick="setLifeMode('avg',this)">平均余命まで</button><button type="button" onclick="setLifeMode('custom',this)">自分で設定</button><button type="button" onclick="setLifeMode('none',this)">死亡後の生活費は必要ない</button></div>
+<input id="lifeModeVal" type="hidden" value="avg">
+<div id="customUntil" class="hidden"><label>何歳まで計算しますか？<input id="until" type="number" min="18" max="110" value="85"></label></div>
+<div id="lifeHint" class="notice"></div>
+</section>
+<section class="card"><h2>⑩ 診断</h2><button class="primary" onclick="calc()">わが家の必要保障額を診断する</button></section>
+<section class="card result" id="result" style="display:none"><h2>診断結果</h2><div class="muted">現在の保障・資産などを差し引いた</div><div class="big"><span id="need">0</span>万円</div>
+<div id="coverageStatus" class="status"></div>
+<div class="kpis"><div class="kpi"><small>必要資金総額</small><strong><span id="totalNeed">0</span>万円</strong></div><div class="kpi"><small>準備済み・見込めるお金</small><strong><span id="totalOffset">0</span>万円</strong></div></div>
+<div id="familyLogic" class="notice"></div><div class="section">必要なお金</div><div class="row"><span>生活費</span><b><span id="rl"></span>万円</b></div><div class="row"><span>教育費</span><b><span id="re"></span>万円</b></div><div id="edetail"></div><div class="row"><span>住居費</span><b><span id="rh"></span>万円</b></div><div class="row"><span>葬儀・身辺整理費</span><b><span id="ro"></span>万円</b></div><div class="section">差し引けるお金</div><div class="row"><span>配偶者収入</span><b>▲<span id="rsp"></span>万円</b></div><div class="row"><span>配偶者自身の老齢年金（65歳以降・入力額ベース）</span><b>▲<span id="rsop"></span>万円</b></div><div class="row"><span>遺族基礎年金</span><b>▲<span id="rb"></span>万円</b></div><div class="row"><span>遺族厚生年金（概算）</span><b>▲<span id="rk"></span>万円</b></div><div class="row"><span>中高齢寡婦加算（該当時・概算）</span><b>▲<span id="rw"></span>万円</b></div><div class="row"><span>児童手当（今後・概算）</span><b>▲<span id="rca"></span>万円</b></div>
+<div class="row"><span>児童扶養手当（確認済み額から計算）</span><b>▲<span id="rjfa"></span>万円</b></div>
+<div class="row"><span>養育費・その他の継続収入</span><b>▲<span id="rotherinc"></span>万円</b></div>
+<div class="row"><span>資産</span><b>▲<span id="ra"></span>万円</b></div><div class="row"><span>死亡保険金</span><b>▲<span id="ri"></span>万円</b></div><div class="row"><span>死亡退職金等</span><b>▲<span id="rr"></span>万円</b></div>
+<div class="section">これから必要保障額はどう変わる？</div>
+<div class="chart" id="futureChart"></div>
+<div class="notice">必要保障額はずっと同じではありません。子どもの成長、教育費の消化、資産形成などによって一般に減っていきます。</div>
+<div class="sourcebox"><b>この診断の考え方</b><br>必要資金（生活費・教育費・住居費・葬儀・身辺整理費）から、配偶者収入・公的遺族年金・資産・現在の死亡保障・死亡退職金等を差し引いて「不足保障額」を表示します。教育費と公的保障は統計・制度を使った概算です。児童手当は2026年制度を年齢別に自動計算します。児童扶養手当は所得・控除・公的年金との調整が複雑なため、必要保障額への反映は確認済みの実受給月額と受給見込期間を入力した場合に限ります。教育費は幼稚園～高校を文部科学省「令和5年度子供の学習費調査」訂正版、大学等の学費は令和7年度学生納付金調査・国立大学標準額を基礎にしています。大学等で「自宅外」を選んだ場合は、JASSO学生生活調査の自宅通学との差額を平均的な追加生活費として加算します。高校は授業料だけでなく学校外活動費等も含む平均的な家庭負担を使用しているため、「無償化＝0円」とはしていません。</div>
+<div class="actions"><button class="secondary" onclick="window.print()">結果をPDF保存／印刷</button><button class="secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">条件を見直す</button></div>
+</section>
+
+<script>
+const $=x=>document.getElementById(x),N=x=>Number($(x)?.value)||0,F=x=>Math.round(x).toLocaleString('ja-JP');
+const COST={
+ kgp:55.5,kgv:104.1,        // R5訂正版 学習費×3年
+ esp:220.2,esv:1045.2,      // R5訂正版 学習費×6年
+ msp:162.6,msv:468.0,       // R5訂正版 学習費×3年
+ hp:179.1,hv:353.7,         // R5訂正版 学習費×3年
+ unp:242.5,uns:242.5,       // 国立大学標準額: 入学料28.2 + 授業料53.58×4
+ uh:418.9,us:567.2,         // R7私大: 文科/理科の授業料・入学料・施設設備費から4年概算
+ gnp:135.4,gns:135.4,       // 国立大学院2年の標準額目安
+ gph:210.2,gps:210.2        // R7私立大学院博士前期課程の平均から2年概算
+};
+// 自宅外通学の追加負担（万円/年）。大学・短大はJASSO令和6年度、専門学校は同年度調査。
+// 大学院のみ直近取得できたJASSO令和4年度の修士課程差額を使用。
+const AWAY_EXTRA={university:54.2,junior:59.0,vocational:69.7,graduate:53.0};
+function mark(g,b){document.querySelectorAll('#'+g+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on')}
+function sp(v,b){$('hasSp').value=v;mark('spb',b);$('spa').classList.toggle('hidden',!v);syncLifeMode();updateLifeHint();refreshSingleParentIncomeUI();updateLivingCalc()}
+
+
+function setKosei(v,b){
+ $('koseiJoinVal').value=v;mark('koseiJoin',b);
+ $('koseiDetail').classList.toggle('hidden',v!=='yes');
+}
+function setLivingInput(v,b){
+ $('livingInputModeVal').value=v;mark('livingInputMode',b);
+ $('livingAuto').classList.toggle('hidden',v!=='auto');
+ $('livingManual').classList.toggle('hidden',v!=='manual');
+ updateLivingCalc();
+}
+
+function currentEducationAnnual(){
+ let total=0;
+ for(let i=1;i<=N('kc');i++){
+   const age=N('a'+i);
+   if(!Number.isFinite(age)||age<0)continue;
+   if(age<=5){
+     total+=($('kg'+i)?.value==='kgv'?34.7:18.5);
+   }else if(age<=11){
+     total+=($('elem'+i)?.value==='private'?174.2:36.7);
+   }else if(age<=14){
+     total+=($('mid'+i)?.value==='private'?156.0:54.2);
+   }else if(age<=17){
+     const v=$('high'+i)?.value;
+     if(v!=='none')total+=(v==='private'?117.9:59.7);
+   }else{
+     const p=$('currentPost'+i)?.value;
+     if(p==='national_h'||p==='national_s')total+=60.6;
+     else if(p==='private_h')total+=104.7;
+     else if(p==='private_s')total+=141.8;
+     else if(p==='junior')total+=110;
+     else if(p==='vocational')total+=120;
+   }
+ }
+ return Number.isFinite(total)?total:0;
+}
+function isSingleParentHousehold(){
+ return N('hasSp')===0 && N('kc')>0;
+}
+function currentJfaMonthly(){
+ if(!isSingleParentHousehold() || $('jfaStatus')?.value!=='receiving')return 0;
+ if($('jfaInputMode')?.value==='deposit')return Math.max(0,N('jfaDepositAmount')*10000/2);
+ return Math.max(0,N('jfaConfirmedMonthly')*10000);
+}
+function currentSupportMonthly(){
+ if(!isSingleParentHousehold() || $('supportStatus')?.value!=='yes')return 0;
+ return Math.max(0,N('supportMonthly')*10000);
+}
+function currentOtherMonthly(){
+ if(!isSingleParentHousehold())return 0;
+ return Math.max(0,N('otherCurrentMonthly')*10000);
+}
+/* 現在の家計収入は必ずこの関数だけで作る。生活費計算側で再計算しない。 */
+function currentHouseholdIncome(){
+ const rate=netRateValue();
+ const salaryGrossAnnualMan=N('headGrossIncome')+(N('hasSp')===1?N('spGrossIncome'):0);
+ const salaryTakehomeAnnualMan=salaryGrossAnnualMan*rate;
+
+ const jfaMonthlyYen=currentJfaMonthly();
+ const supportMonthlyYen=currentSupportMonthly();
+ const otherMonthlyYen=currentOtherMonthly();
+ const jfaAnnualMan=jfaMonthlyYen*12/10000;
+ const supportAnnualMan=supportMonthlyYen*12/10000;
+ const otherAnnualMan=otherMonthlyYen*12/10000;
+
+ // 額面上の世帯収入（確認表示用）
+ const grossHouseholdAnnualMan=salaryGrossAnnualMan+jfaAnnualMan+supportAnnualMan+otherAnnualMan;
+
+ // 実際の生活費原資：
+ // 給与だけ手取り換算し、児童扶養手当・養育費・その他収入は100%加算する。
+ const livingIncomeAnnualMan=
+   salaryTakehomeAnnualMan+jfaAnnualMan+supportAnnualMan+otherAnnualMan;
+ const totalMonthlyYen=livingIncomeAnnualMan*10000/12;
+
+ return {
+   salaryGrossAnnualMan,salaryTakehomeAnnualMan,
+   grossEarnedAnnualMan:salaryGrossAnnualMan,
+   jfaMonthlyYen,supportMonthlyYen,otherMonthlyYen,
+   jfaAnnualMan,supportAnnualMan,otherAnnualMan,
+   grossHouseholdAnnualMan,livingIncomeAnnualMan,
+   earnedMonthlyYen:salaryTakehomeAnnualMan*10000/12,
+   totalMonthlyYen
+ };
+}
+function updateJfaInputUI(){
+ const deposit=$('jfaInputMode')?.value==='deposit';
+ $('jfaMonthlyBox')?.classList.toggle('hidden',deposit);
+ $('jfaDepositBox')?.classList.toggle('hidden',!deposit);
+ updateLivingCalc();
+}
+function updateLivingCalc(){
+ const inc=currentHouseholdIncome();
+ const mode=$('livingInputModeVal')?.value||'auto';
+
+ const housingAnnualMan=currentHousingAnnual();
+ const eo=$('educationNowOverride')?.value;
+ const educationAnnualMan=(eo!==undefined&&eo!==null&&eo!=='')
+   ?Math.max(0,Number(eo)||0):currentEducationAnnual();
+ const savingAnnualMan=N('annualSavingNow');
+
+ const housingMonthlyYen=housingAnnualMan*10000/12;
+ const educationMonthlyYen=educationAnnualMan*10000/12;
+ const savingMonthlyYen=savingAnnualMan*10000/12;
+
+ // 給与等だけで住宅・教育・貯蓄を負担した後の残額を計算する。
+ // ここがマイナスでも、児童扶養手当・養育費・その他収入まで0円に巻き込まない。
+ const earnedRemainderMonthlyYen=Math.max(0,
+   inc.earnedMonthlyYen-housingMonthlyYen-educationMonthlyYen-savingMonthlyYen
+ );
+ const singleParentCashMonthlyYen=
+   inc.jfaMonthlyYen+inc.supportMonthlyYen+inc.otherMonthlyYen;
+ const rawLivingMonthlyYen=earnedRemainderMonthlyYen+singleParentCashMonthlyYen;
+ const autoLivingMonthlyYen=rawLivingMonthlyYen;
+ const autoLivingMan=autoLivingMonthlyYen/10000;
+ const finalLivingMan=mode==='manual'?Math.max(0,N('livingManualValue')):autoLivingMan;
+
+ const put=(id,val)=>{const el=$(id);if(el)el.textContent=val};
+ put('earnedNetDisplay',inc.salaryTakehomeAnnualMan.toFixed(1));
+ put('jfaIncomeDisplay',(inc.jfaMonthlyYen*12/10000).toFixed(1));
+ put('supportIncomeDisplay',(inc.supportMonthlyYen*12/10000).toFixed(1));
+ put('otherCurrentIncomeDisplay',(inc.otherMonthlyYen*12/10000).toFixed(1));
+ put('jfaMonthlyDisplay',Math.round(inc.jfaMonthlyYen).toLocaleString('ja-JP'));
+ put('supportMonthlyDisplay',Math.round(inc.supportMonthlyYen).toLocaleString('ja-JP'));
+ put('otherMonthlyDisplay',Math.round(inc.otherMonthlyYen).toLocaleString('ja-JP'));
+ put('currentIncomeDisplay',inc.livingIncomeAnnualMan.toFixed(1));
+ put('currentIncomeMonthlyDisplay',Math.round(inc.totalMonthlyYen).toLocaleString('ja-JP'));
+ put('grossEarnedAnnualDisplay',inc.grossEarnedAnnualMan.toFixed(1));
+ put('jfaAnnualDisplay',inc.jfaAnnualMan.toFixed(1));
+ put('supportAnnualDisplay',inc.supportAnnualMan.toFixed(1));
+ put('otherAnnualDisplay',inc.otherAnnualMan.toFixed(1));
+ put('grossHouseholdAnnualDisplay',inc.grossHouseholdAnnualMan.toFixed(1));
+ put('livingSalaryGrossAnnual',inc.salaryGrossAnnualMan.toFixed(1));
+ put('livingSalaryTakehomeAnnual',inc.salaryTakehomeAnnualMan.toFixed(1));
+ put('livingHouseholdGrossAnnual',inc.grossHouseholdAnnualMan.toFixed(1));
+ put('livingJfaAnnual',inc.jfaAnnualMan.toFixed(1));
+ put('livingSupportAnnual',inc.supportAnnualMan.toFixed(1));
+ put('livingOtherAnnual',inc.otherAnnualMan.toFixed(1));
+ put('livingIncomeAnnual',inc.livingIncomeAnnualMan.toFixed(1));
+ put('livingIncomeMonthly',(inc.livingIncomeAnnualMan/12).toFixed(1));
+ put('livingHousingAnnual',housingAnnualMan.toFixed(1));
+ put('livingEducationAnnual',educationAnnualMan.toFixed(1));
+ put('livingSavingAnnual',savingAnnualMan.toFixed(1));
+ put('livingEarnedRemainder',(earnedRemainderMonthlyYen*12/10000).toFixed(1));
+ put('livingSingleParentCash',(singleParentCashMonthlyYen*12/10000).toFixed(1));
+ put('livingJfaActual',(inc.jfaMonthlyYen*12/10000).toFixed(1));
+ put('livingSupportActual',(inc.supportMonthlyYen*12/10000).toFixed(1));
+ put('livingOtherActual',(inc.otherMonthlyYen*12/10000).toFixed(1));
+ put('livingCurrentAnnual',(autoLivingMonthlyYen*12/10000).toFixed(1));
+ put('housingNowDisplay',housingAnnualMan.toFixed(1));
+ put('educationNowDisplay',educationAnnualMan.toFixed(1));
+ put('savingNowDisplay',savingAnnualMan.toFixed(1));
+ put('jfaAddNow',Math.round(inc.jfaMonthlyYen).toLocaleString('ja-JP'));
+ put('supportAddNow',Math.round(inc.supportMonthlyYen).toLocaleString('ja-JP'));
+ put('otherAddNow',Math.round(inc.otherMonthlyYen).toLocaleString('ja-JP'));
+ const spAdd=Math.round(inc.jfaMonthlyYen+inc.supportMonthlyYen+inc.otherMonthlyYen).toLocaleString('ja-JP');
+ put('singleParentAddTotal',spAdd);
+ put('livingAutoResult',autoLivingMan.toFixed(1));
+ put('jfaConvertedMonthly',Math.round(inc.jfaMonthlyYen).toLocaleString('ja-JP'));
+
+ if($('living'))$('living').value=finalLivingMan;
+
+ let w=$('livingCalcWarning');
+ if(w){
+   w.classList.toggle('hidden',rawLivingMonthlyYen>=0);
+   w.textContent=rawLivingMonthlyYen<0?'現在の支出が家計収入を上回っています。各収入・支出を確認するか、「月額を直接入力」を選んでください。':'';
+ }
+}
+function chooseLifeMode(v){
+ let buttons=[...document.querySelectorAll('#lifeMode button')];
+ let idx=v==='avg'?0:v==='custom'?1:2;
+ $('lifeModeVal').value=v;buttons.forEach(x=>x.classList.remove('on'));if(buttons[idx])buttons[idx].classList.add('on');
+ $('customUntil').classList.toggle('hidden',v!=='custom');updateLifeHint();
+}
+function syncLifeMode(){
+ if(N('hasSp')===0 && N('kc')===0){chooseLifeMode('none')}
+ else if($('lifeModeVal').value==='none'){chooseLifeMode('avg')}
+}
+
+function kids(c,b){$('kc').value=c;mark('kb',b);draw();syncLifeMode();refreshSingleParentIncomeUI();updateBenefits();updateLivingCalc()}
+function draw(){
+ let c=N('kc');$('ka').innerHTML='';$('ea').innerHTML='<div class="notice">進路は各お子さんの欄で設定します。</div>';
+ if(!c){$('ka').innerHTML='<div class="notice">お子さんなし</div>';return}
+ for(let i=1;i<=c;i++){
+  $('ka').insertAdjacentHTML('beforeend',`<div class="child">
+   <div class="head"><h3>第${i}子</h3><span class="badge">${i}/${c}</span></div>
+   <label>生年月日</label>
+<div class="birth-row">
+<input id="by${i}" class="birth-year" type="text" inputmode="numeric" maxlength="4" placeholder="2013" aria-label="生年"><span>年</span>
+<input id="bm${i}" class="birth-md" type="text" inputmode="numeric" maxlength="2" placeholder="9" aria-label="生月"><span>月</span>
+<input id="bd${i}" class="birth-md" type="text" inputmode="numeric" maxlength="2" placeholder="17" aria-label="生日"><span>日</span>
+</div>
+<div class="age-badge" id="ageView${i}">生年月日を選ぶと現在の年齢を表示します。</div>
+<input id="a${i}" type="hidden" value="0">
+<div id="eduFuture${i}" class="hidden">
+<div class="note" id="schoolStage${i}"></div>
+<div id="eduChoices${i}"></div>
+<label>経済的に独立する予定年齢
+<input id="indAge${i}" type="number" min="15" max="35" value="18" inputmode="numeric" oninput="this.dataset.manual='1';updateLivingCalc();updateBenefits()">
+<small>進路から自動で目安を入れます。就職時期などに合わせて変更できます。</small></label>
+</div>
+<label>障害年金1級・2級に該当する障害がありますか？</label>
+<select id="dis${i}" style="display:none"><option value="no" selected>いいえ</option><option value="yes">はい</option></select>
+<div class="choice-radio-row"><label class="choice-radio"><input type="radio" name="disRadio${i}" value="no" checked onchange="setDisability(${i},'no')"> いいえ</label><label class="choice-radio"><input type="radio" name="disRadio${i}" value="yes" onchange="setDisability(${i},'yes')"> はい</label></div>
+<small>該当する場合、公的遺族年金の「子」の年齢要件を20歳未満までとして概算します。</small></label></div>`)
+ }
+}
+function currentHousingAnnual(){
+ let h=$('home')?.value;
+ if(h==='rent')return N('rentMonthly')*12;
+ if(h==='owned')return N('ownedMonthlyCost')*12;
+ return N('mortgageMonthly')*12+N('mortgageBonusAnnual');
+}
+function homeUI(){
+ let h=$('home')?.value;
+ $('loanCurrentBox')?.classList.toggle('hidden',h!=='loan');
+ $('rentCurrentBox')?.classList.toggle('hidden',h!=='rent');
+ $('ownedCurrentBox')?.classList.toggle('hidden',h!=='owned');
+ danUI();updateLivingCalc();
+}
+function danUI(){
+ $('share')?.classList.toggle('hidden',$('home')?.value!=='loan'||$('danshin')?.value!=='yes');
+}
+const LE={male:{0:81.35,10:71.60,20:61.72,30:51.98,40:42.29,50:32.82,60:23.86,70:15.78,80:9.10,90:4.38},female:{0:87.33,10:77.56,20:67.67,30:57.85,40:48.05,50:38.41,60:29.07,70:20.10,80:11.95,90:5.66}};
+function lifeExp(age,sex){age=Math.max(0,Math.min(90,age));let lo=Math.floor(age/10)*10,hi=Math.min(90,lo+10);if(lo===hi)return LE[sex][lo];return LE[sex][lo]+(LE[sex][hi]-LE[sex][lo])*(age-lo)/(hi-lo)}
+function setLifeMode(v,b){$('lifeModeVal').value=v;mark('lifeMode',b);$('customUntil').classList.toggle('hidden',v!=='custom');updateLifeHint()}
+function lifeBaseAge(){return N('hasSp')?N('spAge'):N('age')}
+function lifeSex(){return N('hasSp')?$('spSex').value:$('headSex').value}
+function lifeEndAge(){if($('lifeModeVal').value==='none')return lifeBaseAge();if($('lifeModeVal').value==='custom')return N('until');let a=lifeBaseAge();return a+lifeExp(a,lifeSex())}
+function updateLifeHint(){if(!$('lifeHint'))return;if($('lifeModeVal').value==='none'){$('lifeHint').innerHTML='<b>死亡後の生活費は0円</b>として計算します。';return}if($('lifeModeVal').value==='custom'){$('lifeHint').innerHTML='指定した年齢まで生活費を計算します。';return}let a=lifeBaseAge(),e=lifeExp(a,lifeSex()),end=a+e;$('lifeHint').innerHTML=`${a}歳時点の平均余命 約${e.toFixed(1)}年 → <b>約${Math.round(end)}歳まで</b>を目安に計算します。`}
+function stageCost(key,sel,age){
+ let full=COST[sel]||0;if(!full)return 0;
+ let cfg={kg:[3,6],es:[6,12],ms:[12,15],hs:[15,18],u:[18,22],g:[22,24]}[key];
+ let years=cfg[1]-cfg[0],remaining=Math.max(0,Math.min(years,cfg[1]-age));
+ return full*(remaining/years);
+}
+function postYears(post,i){
+ if(['national_h','national_s','private_h','private_s'].includes(post))return 4;
+ if(post==='junior')return 2;
+ if(post==='vocational')return Number($('vocYears'+i)?.value||2);
+ return 0;
+}
+function residenceExtraPerYear(post,i){
+ if(($('residence'+i)?.value||'home')!=='away')return 0;
+ if(['national_h','national_s','private_h','private_s'].includes(post))return AWAY_EXTRA.university;
+ if(post==='junior')return AWAY_EXTRA.junior;
+ if(post==='vocational')return AWAY_EXTRA.vocational;
+ return 0;
+}
+function postTuitionTotal(post,i){
+ if(post==='national_h'||post==='national_s')return 242.5;
+ if(post==='private_h')return 418.9;
+ if(post==='private_s')return 567.2;
+ if(post==='junior')return 220;
+ if(post==='vocational')return 120*postYears(post,i);
+ return 0;
+}
+function educationBreakdown(i){
+ let age=N('a'+i),rows=[],elem=$('elem'+i)?.value,mid=$('mid'+i)?.value,high=$('high'+i)?.value;
+ const add=(label,value)=>{if(value>0.01)rows.push({label,value})};
+ if(elem)add('小学校（残り）',(elem==='private'?174.2:36.7)*Math.max(0,12-Math.max(age,6)));
+ if(mid)add('中学校（残り）',(mid==='private'?156.0:54.2)*Math.max(0,15-Math.max(age,12)));
+ if(high&&high!=='none')add('高校（残り・平均的な家庭負担）',(high==='private'?117.9:59.7)*Math.max(0,18-Math.max(age,15)));
+
+ let post=$('post'+i)?.value||$('currentPost'+i)?.value;
+ let years=postYears(post,i);
+ if(years>0){
+   let remainingYears=age<18?years:Math.max(0,Math.min(years,18+years-age));
+   let fullTuition=postTuitionTotal(post,i);
+   let tuition=years?fullTuition*(remainingYears/years):0;
+   let names={national_h:'国公立大学・文系',national_s:'国公立大学・理系',private_h:'私立大学・文系',private_s:'私立大学・理系',junior:'短期大学',vocational:'専門学校'};
+   add((names[post]||'大学等')+'（学費・残り）',tuition);
+   let extra=residenceExtraPerYear(post,i)*remainingYears;
+   if(extra>0)add('自宅外通学の追加生活費（平均）',extra);
+ }
+ let grad=$('grad'+i)?.value;
+ if(grad&&grad!=='none'){
+   let g=grad.startsWith('national')?135:(grad==='private_h'?180:240);
+   add('大学院（学費・概算）',g);
+   if(($('gradResidence'+i)?.value||'home')==='away')add('大学院の自宅外通学追加（平均）',AWAY_EXTRA.graduate*2);
+ }
+ return rows;
+}
+function eduRemaining(i){
+ return educationBreakdown(i).reduce((a,r)=>a+r.value,0);
+}
+function educationDetailHtml(i){
+ let rows=educationBreakdown(i),total=rows.reduce((a,r)=>a+r.value,0);
+ let h=`<div class="notice" style="margin:8px 0 10px 14px"><b>第${i}子　残り教育費 約${F(total)}万円</b>`;
+ rows.forEach(r=>h+=`<div style="display:flex;justify-content:space-between;gap:10px;margin-top:5px"><span>${r.label}</span><b>${F(r.value)}万円</b></div>`);
+ if(!rows.length)h+='<div class="muted" style="margin-top:5px">今後の教育費は0万円として計算しています。</div>';
+ return h+'</div>';
+}
+function e1(i){return eduRemaining(i)}
+function indY(){
+ let maxYears=0;
+ for(let i=1;i<=N('kc');i++){
+   let age=N('a'+i);
+   let end=childEndAge(i);
+   maxYears=Math.max(maxYears,Math.max(0,end-age));
+ }
+ return maxYears;
+}
+function life(){
+ updateLivingCalc();
+ let hasSp=N('hasSp')===1,c=N('kc'),annual=N('living')*12;
+ if($('lifeModeVal')?.value==='none')return 0;
+ if(hasSp){
+   let total=Math.max(0,lifeEndAge()-lifeBaseAge());
+   let childYears=indY();
+   let first=Math.min(childYears,total);
+   return annual*(first*.8+Math.max(0,total-first)*.6);
+ }
+ if(c>0)return annual*indY()*.8;
+ return 0;
+}
+function et(){let t=0;for(let i=1;i<=N('kc');i++)t+=eduRemaining(i);return t}
+function house(){let survivors=(N('hasSp')===1||N('kc')>0);if(!survivors)return 0;let total=N('hasSp')?Math.max(0,lifeEndAge()-lifeBaseAge()):indY(),rec=N('housing')*12*total;if($('home').value!=='loan')return rec;if($('danshin').value==='yes')return N('loan')*(1-N('shareVal')/100)+rec;return N('loan')+rec}
+function netRateValue(){let v=$('netRate')?.value||'0.75';return v==='custom'?Math.max(0,Math.min(1,N('netRateCustom')/100)):Number(v)}
+function spouseAfterAnnualNet(){
+ if(N('hasSp')!==1)return 0;
+ let mode=$('spAfterMode')?.value||'same';
+ if(mode==='none')return 0;
+ if(mode==='custom')return N('spIncomeCustom');
+ return N('spGrossIncome')*netRateValue();
+}
+function spinc(){return spouseAfterAnnualNet()*Math.max(0,N('spRetire')-N('spAge'))}
+function spouseOldAgePensionRemainingAt(years=0){
+ if(N('hasSp')!==1)return 0;
+ let annual=N('spOldPension');if(annual<=0)return 0;
+ let age=N('spAge')+years;
+ let horizon=0;
+ if($('lifeModeVal').value==='none')return 0;
+ if($('lifeModeVal').value==='custom')horizon=Math.max(0,N('until')-age);
+ else horizon=Math.max(0,lifeExp(age,$('spSex').value));
+ let startDelay=Math.max(0,65-age);
+ let pensionYears=Math.max(0,horizon-startDelay);
+ return annual*pensionYears;
+}
+
+function childPensionYears(i){
+ let age=N('a'+i),limit=($('dis'+i)?.value==='yes'?20:19);
+ return Math.max(0,limit-age);
+}
+function eligibleChildCountAt(y){
+ let c=0;for(let i=1;i<=N('kc');i++)if(childPensionYears(i)>y)c++;return c;
+}
+function maxChildPensionYears(){
+ let m=0;for(let i=1;i<=N('kc');i++)m=Math.max(m,childPensionYears(i));return m;
+}
+function basic(){
+ let max=maxChildPensionYears(),t=0,hasSp=N('hasSp')===1;
+ for(let y=0;y<max;y++){
+  let c=eligibleChildCountAt(y);if(!c)continue;
+  if(hasSp)t+=84.73+Math.min(c,2)*24.38+Math.max(c-2,0)*8.13;
+  else t+=84.73+(c>=2?24.38:0)+Math.max(c-2,0)*8.13;
+ }
+ return t;
+}
+function kpAnnual(){
+ if($('koseiJoinVal').value!=='yes')return 0;
+ let months=Math.max(300,N('koseiYears')*12);
+ let avgMonthlyYen=N('avgAnnualPay')*10000/12;
+ return avgMonthlyYen*5.481/1000*months*.75/10000; // 万円/年
+}
+function kp(){
+ let annual=kpAnnual();if(!annual)return 0;
+ let hasSp=N('hasSp')===1;
+ if(hasSp){
+  let sa=N('spAge'),sex=$('spSex').value,c=N('kc'),years=0;
+  if(sex==='male'){
+   if(sa<55)return 0;
+   let start=(sa<60 && maxChildPensionYears()>0)?sa:Math.max(sa,60);
+   years=Math.max(0,65-start);
+  }else{
+   if(c===0&&sa<30)years=Math.min(5,Math.max(0,65-sa));
+   else years=Math.max(0,65-sa);
+  }
+  return annual*years;
+ }else{
+  // 配偶者がいない場合は、受給順位上の子が対象年齢である期間だけ概算。
+  return annual*maxChildPensionYears();
+ }
+}
+function widowAdd(){
+ // 中高齢寡婦加算：世帯主が男性、配偶者が妻、40～65歳の該当期間を概算。
+ if(N('hasSp')!==1 || $('headSex').value!=='male' || $('spSex').value!=='female' || $('koseiJoinVal').value!=='yes')return 0;
+ let sa=N('spAge'),c=N('kc'),start=null;
+ if(c===0){
+  if(sa>=40&&sa<65)start=sa;
+ }else{
+  let childEnd=maxChildPensionYears();
+  let ageAtChildEnd=sa+childEnd;
+  // 40歳到達時に遺族基礎年金を受けている、または死亡時すでに40歳以上の妻を概算対象にする。
+  let hadEligibleAt40 = sa>=40 || (sa<40 && childEnd>(40-sa));
+  if(hadEligibleAt40)start=Math.max(40,ageAtChildEnd);
+ }
+ if(start===null||start>=65)return 0;
+ return 63.55*(65-start);
+}
+
+
+const BASE_DATE=new Date('2026-09-19T00:00:00');
+function cleanBirthInput(el,maxLen){
+ if(!el)return;
+ el.value=el.value.replace(/[^0-9]/g,'').slice(0,maxLen);
+}
+function syncChildAge(i){
+ let ye=$('by'+i),me=$('bm'+i),de=$('bd'+i),view=$('ageView'+i);
+ cleanBirthInput(ye,4);cleanBirthInput(me,2);cleanBirthInput(de,2);
+ let ys=ye?.value||'',ms=me?.value||'',ds=de?.value||'';
+ if(ys.length!==4||!ms||!ds){
+   $('a'+i).value=0;if(view)view.textContent='生年月日を入力すると現在の年齢を表示します。';
+   $('eduFuture'+i)?.classList.add('hidden');return false;
+ }
+ let y=Number(ys),m=Number(ms),d=Number(ds),born=new Date(y,m-1,d);
+ if(y<1900||y>BASE_DATE.getFullYear()||m<1||m>12||d<1||d>31||born.getFullYear()!=y||born.getMonth()!=m-1||born.getDate()!=d||born>BASE_DATE){
+   $('a'+i).value=0;if(view)view.textContent='生年月日を確認してください。';
+   $('eduFuture'+i)?.classList.add('hidden');return false;
+ }
+ let age=BASE_DATE.getFullYear()-y;
+ if(BASE_DATE.getMonth()+1<m||(BASE_DATE.getMonth()+1===m&&BASE_DATE.getDate()<d))age--;
+ $('a'+i).value=Math.max(0,age);if(view)view.textContent='現在 '+Math.max(0,age)+'歳';
+ renderFutureEducation(i,Math.max(0,age));return true;
+}
+function validateChildBirth(i){
+ let ye=$('by'+i),me=$('bm'+i),de=$('bd'+i);
+ let ys=ye?.value||'',ms=me?.value||'',ds=de?.value||'';
+ if(ys.length!==4||!ms||!ds)return false;
+ let y=Number(ys),m=Number(ms),d=Number(ds),born=new Date(y,m-1,d);
+ return !(y<1900||y>BASE_DATE.getFullYear()||m<1||m>12||d<1||d>31||born.getFullYear()!=y||born.getMonth()!=m-1||born.getDate()!=d||born>BASE_DATE);
+}
+function defaultChildEndAge(i){
+ let p=$('post'+i)?.value||$('currentPost'+i)?.value;
+ let grad=$('grad'+i)?.value||'none';
+ if(grad&&grad!=='none')return 24;
+ if(p==='junior')return 20;
+ if(p==='vocational')return 18+Number($('vocYears'+i)?.value||2);
+ if(['national_h','national_s','private_h','private_s'].includes(p))return 22;
+ if(p==='none')return 18;
+ return Math.max(18,N('a'+i));
+}
+function childEndAge(i){
+ let el=$('indAge'+i);
+ return el&&Number(el.value)>0?Number(el.value):defaultChildEndAge(i);
+}
+function updateIndependentAge(i,force=false){
+ let el=$('indAge'+i);if(!el)return;
+ if(force||el.dataset.manual!=='1')el.value=defaultChildEndAge(i);
+}
+
+function stageFromAge(age){
+ if(age<=5)return '未就学';
+ if(age<=11)return '小学生相当';
+ if(age<=14)return '中学生相当';
+ if(age<=17)return '高校生相当';
+ if(age<=21)return '大学・短大・専門学校等の年代';
+ return '22歳以上';
+}
+function eduSelect(id,label,opts){
+ return `<label>${label}<select id="${id}">${opts.map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('')}</select></label>`;
+}
+function residenceRadio(i,label){
+ return `<div class="field"><label>${label}</label>
+ <select id="residence${i}" style="display:none"><option value="home" selected>実家から通学</option><option value="away">自宅外（寮・一人暮らし等）</option></select>
+ <div class="residence-radio-row" role="radiogroup" aria-label="${label}">
+ <label class="residence-radio"><input type="radio" name="residenceRadio${i}" value="home" checked onchange="setResidence(${i},this.value)"> 実家から通学</label>
+ <label class="residence-radio"><input type="radio" name="residenceRadio${i}" value="away" onchange="setResidence(${i},this.value)"> 自宅外（寮・一人暮らし等）</label>
+ </div></div>`;
+}
+function setResidence(i,value){
+ let sel=$('residence'+i);if(!sel)return;
+ sel.value=value;sel.dispatchEvent(new Event('change',{bubbles:true}));
+}
+function syncResidenceRadio(i){
+ let sel=$('residence'+i);if(!sel)return;
+ let r=document.querySelector(`input[name="residenceRadio${i}"][value="${sel.value||'home'}"]`);
+ if(r)r.checked=true;
+}
+
+
+function postNeedsResidence(v){return ['national_h','national_s','private_h','private_s','junior','vocational'].includes(v);}
+function conditionalResidenceRadio(i,kind,label){
+ let id=kind==='grad'?'gradResidence'+i:'residence'+i,name=kind==='grad'?'gradResidenceRadio'+i:'residenceRadio'+i;
+ return `<div id="${kind}ResidenceWrap${i}" class="conditional-residence" style="display:none"><label>${label}</label><select id="${id}" style="display:none"><option value="home" selected>実家から通学</option><option value="away">自宅外（寮・一人暮らし等）</option></select><div class="residence-radio-row"><label class="residence-radio"><input type="radio" name="${name}" value="home" checked onchange="setCondResidence(${i},'${kind}',this.value)"> 実家から通学</label><label class="residence-radio"><input type="radio" name="${name}" value="away" onchange="setCondResidence(${i},'${kind}',this.value)"> 自宅外（寮・一人暮らし等）</label></div></div>`;
+}
+function setCondResidence(i,kind,v){let el=$(kind==='grad'?'gradResidence'+i:'residence'+i);if(el){el.value=v;el.dispatchEvent(new Event('change',{bubbles:true}));}}
+function updateResidenceVisibility(i){let post=$('post'+i)?.value||$('currentPost'+i)?.value||'none',grad=$('grad'+i)?.value||'none';let p=$('postResidenceWrap'+i),g=$('gradResidenceWrap'+i);if(p)p.style.display=postNeedsResidence(post)?'block':'none';if(g)g.style.display=(grad&&grad!=='none')?'block':'none';}
+function setDisability(i,v){let el=$('dis'+i);if(el){el.value=v;el.dispatchEvent(new Event('change',{bubbles:true}));}}
+function renderFutureEducation(i,age){
+ let box=$('eduFuture'+i),choices=$('eduChoices'+i),stage=$('schoolStage'+i);if(!box||!choices)return;
+ // Preserve choices before rebuilding DOM. calc() re-validates DOB, so without this selects reset to first option.
+ let prev={};
+ ['elem','mid','high','post','grad','currentPost','vocYears','residence','gradResidence'].forEach(k=>{let el=$(k+i);if(el)prev[k]=el.value});
+ box.classList.remove('hidden');stage.textContent='現在：'+stageFromAge(age)+'　これから先の進路だけ選択してください。';
+ let h='<div class="edu-dynamic">';
+ if(age<=5)h+=eduSelect('elem'+i,'小学校',[['public','公立'],['private','私立']]);
+ if(age<=11)h+=eduSelect('mid'+i,'中学校',[['public','公立'],['private','私立']]);
+ if(age<=14)h+=eduSelect('high'+i,'高校',[['public','公立'],['private','私立'],['none','進学しない']]);
+ if(age<=17){
+   h+=eduSelect('post'+i,'高校卒業後',[['none','進学しない'],['national_h','国公立大学・文系'],['national_s','国公立大学・理系'],['private_h','私立大学・文系'],['private_s','私立大学・理系'],['junior','短期大学'],['vocational','専門学校']]);
+   h+=conditionalResidenceRadio(i,'post','大学・短大・専門学校へ進学した場合の住まい');
+   h+=`<label id="vocYearsLabel${i}" class="hidden">専門学校の修業年数<select id="vocYears${i}"><option value="2">2年</option><option value="3">3年</option><option value="4">4年</option></select></label>`;
+   h+=eduSelect('grad'+i,'大学院',[['none','進学しない'],['national_h','国公立・文系'],['national_s','国公立・理系'],['private_h','私立・文系'],['private_s','私立・理系']]);
+   h+=conditionalResidenceRadio(i,'grad','大学院へ進学した場合の住まい');
+ } else if(age<=21){
+   h+=eduSelect('currentPost'+i,'現在の進学状況',[['none','就職・その他'],['national_h','国公立大学・文系'],['national_s','国公立大学・理系'],['private_h','私立大学・文系'],['private_s','私立大学・理系'],['junior','短期大学'],['vocational','専門学校']]);
+   h+=conditionalResidenceRadio(i,'post','大学・短大・専門学校での住まい');
+ }
+ h+='</div>';choices.innerHTML=h;
+ Object.entries(prev).forEach(([k,v])=>{let el=$(k+i);if(el&&[...el.options].some(o=>o.value===v))el.value=v});
+ updateResidenceVisibility(i);
+ updateIndependentAge(i);
+ ['elem','mid','high','post','grad','currentPost','vocYears','residence','gradResidence'].forEach(k=>{let el=$(k+i);if(el)el.addEventListener('change',()=>{updateResidenceVisibility(i);updateIndependentAge(i);syncLegacyEducation(i);updateLivingCalc();updateBenefits()})});
+ $('post'+i)?.addEventListener('change',e=>{$('vocYearsLabel'+i)?.classList.toggle('hidden',e.target.value!=='vocational')});
+ if($('post'+i))$('vocYearsLabel'+i)?.classList.toggle('hidden',$('post'+i).value!=='vocational');
+ syncLegacyEducation(i);
+}
+function syncLegacyEducation(i){}
+function futureEconomicSupport(i){
+ let p=$('post'+i)?.value||$('currentPost'+i)?.value;
+ return ['national_h','national_s','private_h','private_s','junior','vocational'].includes(p);
+}
+function childAllowanceMonthlyAt(y){
+ let recipients=[],all=[];
+ for(let i=1;i<=N('kc');i++){
+   let age=N('a'+i)+y;
+   if(age<19)recipients.push({age,idx:i});
+   if(age<19||(age<23&&futureEconomicSupport(i)))all.push({age,idx:i});
+ }
+ all.sort((x,z)=>z.age-x.age);
+ let rank={};all.forEach((x,j)=>rank[x.idx]=j+1);
+ let total=0;
+ recipients.forEach(x=>{
+   if((rank[x.idx]||99)>=3)total+=30000;
+   else total+=(x.age<3?15000:10000);
+ });
+ return total;
+}
+function childAllowanceNow(){return childAllowanceMonthlyAt(0)}
+function childAllowanceTotal(){
+ let max=0;for(let i=1;i<=N('kc');i++)max=Math.max(max,Math.max(0,19-N('a'+i)));
+ let yen=0;for(let y=0;y<max;y++)yen+=childAllowanceMonthlyAt(y)*12;
+ return yen/10000;
+}
+function youngestRemainingYears(){
+ let max=0;
+ for(let i=1;i<=N('kc');i++)max=Math.max(max,Math.max(0,childEndAge(i)-N('a'+i)));
+ return max;
+}
+function jfaTotal(){return 0}
+function supportTotal(){
+ if($('singleParent').value!=='yes'||$('supportStatus').value!=='yes')return 0;
+ let years=0,t=$('supportEndType').value;
+ if(t==='custom')years=N('supportCustomYears');
+ else {
+   let target=t==='independence'?null:Number(t);
+   for(let i=1;i<=N('kc');i++){
+     let end=target===null?childEndAge(i):target;
+     years=Math.max(years,Math.max(0,end-N('a'+i)));
+   }
+ }
+ return N('supportMonthly')*12*years/10000;
+}
+function continuingIncomeTotal(){
+ return 0;
+}
+function updateBenefits(){
+ if($('caNow'))$('caNow').textContent=Math.round(childAllowanceNow()).toLocaleString();
+ if($('caTotal'))$('caTotal').textContent=Math.round(childAllowanceTotal()).toLocaleString();}
+function educationRemainingAt(i,years){
+ let age=N('a'+i)+years,rows=0;
+ let elem=$('elem'+i)?.value,mid=$('mid'+i)?.value,high=$('high'+i)?.value;
+ if(elem)rows+=(elem==='private'?174.2:36.7)*Math.max(0,12-Math.max(age,6));
+ if(mid)rows+=(mid==='private'?156.0:54.2)*Math.max(0,15-Math.max(age,12));
+ if(high&&high!=='none')rows+=(high==='private'?117.9:59.7)*Math.max(0,18-Math.max(age,15));
+ let post=$('post'+i)?.value||$('currentPost'+i)?.value,py=postYears(post,i);
+ if(py>0){
+   let ry=age<18?py:Math.max(0,Math.min(py,18+py-age));
+   rows+=py?postTuitionTotal(post,i)*(ry/py):0;
+   rows+=residenceExtraPerYear(post,i)*ry;
+ }
+ let grad=$('grad'+i)?.value;
+ if(grad&&grad!=='none'){
+   let gradStart=18+Math.max(4,py||4), gradEnd=gradStart+2;
+   let ry=Math.max(0,Math.min(2,gradEnd-Math.max(age,gradStart)));
+   let full=grad.startsWith('national')?135:(grad==='private_h'?180:240);
+   rows+=full*(ry/2);
+   if(($('gradResidence'+i)?.value||$('residence'+i)?.value||'home')==='away')rows+=AWAY_EXTRA.graduate*ry;
+ }
+ return Math.max(0,rows);
+}
+function childAllowanceRemainingAt(years){
+ let max=0;for(let i=1;i<=N('kc');i++)max=Math.max(max,Math.max(0,19-N('a'+i)));
+ let yen=0;for(let y=years;y<max;y++)yen+=childAllowanceMonthlyAt(y)*12;
+ return yen/10000;
+}
+function basicRemainingAt(years){
+ let max=maxChildPensionYears(),t=0,hasSp=N('hasSp')===1;
+ for(let y=years;y<max;y++){
+   let c=eligibleChildCountAt(y);if(!c)continue;
+   if(hasSp)t+=84.73+Math.min(c,2)*24.38+Math.max(c-2,0)*8.13;
+   else t+=84.73+(c>=2?24.38:0)+Math.max(c-2,0)*8.13;
+ }
+ return t;
+}
+function kpRemainingAt(years){
+ let annual=kpAnnual();if(!annual)return 0;
+ let hasSp=N('hasSp')===1;
+ if(hasSp){
+   let sa=N('spAge')+years,sex=$('spSex').value,c=N('kc'),dur=0;
+   if(sex==='male'){
+     if(sa<55)return 0;
+     let childRemain=Math.max(0,maxChildPensionYears()-years);
+     let start=(sa<60&&childRemain>0)?sa:Math.max(sa,60);
+     dur=Math.max(0,65-start);
+   }else{
+     if(c===0&&sa<30)dur=Math.min(5,Math.max(0,65-sa));
+     else dur=Math.max(0,65-sa);
+   }
+   return annual*dur;
+ }
+ return annual*Math.max(0,maxChildPensionYears()-years);
+}
+function widowRemainingAt(years){
+ if(N('hasSp')!==1||$('headSex').value!=='male'||$('spSex').value!=='female'||$('koseiJoinVal').value!=='yes')return 0;
+ let sa=N('spAge')+years,c=N('kc'),start=null,childRemain=Math.max(0,maxChildPensionYears()-years);
+ if(c===0){if(sa>=40&&sa<65)start=sa}
+ else{
+   let ageAtChildEnd=sa+childRemain;
+   let hadEligibleAt40=sa>=40||(sa<40&&childRemain>(40-sa));
+   if(hadEligibleAt40)start=Math.max(40,ageAtChildEnd);
+ }
+ return start===null||start>=65?0:63.55*(65-start);
+}
+function futureNeedAt(years){
+ updateLivingCalc();
+ let hasSp=N('hasSp')===1,c=N('kc'),annualLiving=N('living')*12;
+ let remChild=0;
+ for(let i=1;i<=c;i++)remChild=Math.max(remChild,Math.max(0,childEndAge(i)-(N('a'+i)+years)));
+
+ // その時点で万が一が起きた場合に「そこから先」に残る生活費を全期間積み上げる。
+ let liv=0;
+ if($('lifeModeVal').value!=='none'){
+   if(hasSp){
+     let baseAge=N('spAge')+years;
+     let total=$('lifeModeVal').value==='custom'
+       ?Math.max(0,N('until')-baseAge)
+       :Math.max(0,lifeExp(baseAge,$('spSex').value));
+     let first=Math.min(remChild,total);
+     liv=annualLiving*(first*.8+Math.max(0,total-first)*.6);
+   }else if(c) liv=annualLiving*remChild*.8;
+ }
+
+ // 教育費は「その時点から先にまだ残っている分」だけを積み上げる。
+ let edu=0;for(let i=1;i<=c;i++)edu+=educationRemainingAt(i,years);
+
+ // 住居費もその時点以降の残期間。ローン残高は簡易的に35年均等減少で概算。
+ let housing=0,survivors=hasSp||c>0;
+ if(survivors){
+   let total=hasSp
+     ?($('lifeModeVal').value==='custom'?Math.max(0,N('until')-(N('spAge')+years)):Math.max(0,lifeExp(N('spAge')+years,$('spSex').value)))
+     :remChild;
+   let rec=N('housing')*12*total;
+   if($('home').value==='loan'){
+     let loanRem=Math.max(0,N('loan')*(1-years/35));
+     housing=($('danshin').value==='yes'?loanRem*(1-N('shareVal')/100):loanRem)+rec;
+   }else housing=rec;
+ }
+
+ let other=N('funeral');
+ let spouse=hasSp?spouseAfterAnnualNet()*Math.max(0,N('spRetire')-(N('spAge')+years)):0;
+ let publicBenefits=basicRemainingAt(years)+kpRemainingAt(years)+widowRemainingAt(years)+childAllowanceRemainingAt(years)+spouseOldAgePensionRemainingAt(years);
+ let assets=N('cash')+N('invest')+N('other')+N('insurance')+N('retire');
+
+ return Math.max(0,liv+edu+housing+other-spouse-publicBenefits-assets);
+}
+function drawFuture(current){
+ let years=[0,5,10,15,20];
+ // 現在も同じ「その時点から先の残存必要資金」ロジックで揃える。
+ let vals=years.map(y=>futureNeedAt(y)),max=Math.max(1,...vals);
+ $('futureChart').innerHTML=years.map((y,j)=>`<div class="barrow"><div class="barlabel"><span>${y===0?'現在':y+'年後'}</span><b>${F(vals[j])}万円</b></div><div class="track"><div class="fill" style="width:${Math.max(vals[j]?3:0,vals[j]/max*100)}%"></div></div></div>`).join('')+
+ '<small>※各時点で万が一が起きた場合に、その時点から先に残る生活費・教育費・住居費等を積み上げ、残りの公的保障・配偶者収入・配偶者自身の老齢年金（入力時）・現在入力されている資産等を差し引いた参考シナリオです。大学等の将来費用も現在時点から残存必要資金に含めます。物価・運用益・制度変更・将来の資産増減は反映していません。</small>';
+}
+
+function jumpToId(id){
+ let el=$(id);
+ if(!el)return;
+ if(el.type==='hidden'||el.offsetParent===null){
+   let card=el.closest('.card');
+   el=card?.querySelector('input:not([type="hidden"]):not(.hidden input),select:not(.hidden select),button')||card||el;
+ }
+ let card=el.closest?.('.card')||el;
+ card.scrollIntoView({behavior:'smooth',block:'start'});
+ setTimeout(()=>{if(el.classList)el.classList.add('input-error');if(typeof el.focus==='function')el.focus({preventScroll:true})},400);
+}
+function calc(){
+ let calcStage='入力チェック',jumpId='age';
+ try{
+   document.querySelectorAll('.input-error').forEach(x=>x.classList.remove('input-error'));
+   let errors=[];
+   const req=(id,msg,test)=>{let el=$(id);if(!el||!test(el)){errors.push({id,el,msg});if(el)el.classList.add('input-error')}};
+   req('age','世帯主の年齢を入力してください。',el=>Number(el.value)>0);
+   for(let n=1;n<=N('kc');n++){
+     if(!validateChildBirth(n)){let el=$('by'+n);errors.push({id:'by'+n,el,msg:'第'+n+'子の生年月日を入力してください。'});['by','bm','bd'].forEach(k=>$(k+n)?.classList.add('input-error'))}
+   }
+   if($('livingInputModeVal')?.value==='auto')req('headGrossIncome','世帯主の現在の税込年収を入力してください。',el=>el.value!==''&&Number(el.value)>=0);
+   else req('livingManualValue','現在の生活費（月額）を入力してください。',el=>el.value!==''&&Number(el.value)>=0);
+   if($('singleParent')?.value==='yes'&&$('jfaStatus')?.value==='receiving'){
+     if($('jfaInputMode')?.value==='deposit')req('jfaDepositAmount','児童扶養手当の直近の振込額を入力してください。',el=>Number(el.value)>0);
+     else req('jfaConfirmedMonthly','児童扶養手当の現在の月額を入力してください。',el=>Number(el.value)>0);
+   }
+   if($('singleParent')?.value==='yes'&&$('supportStatus')?.value==='yes')req('supportMonthly','養育費の現在の月額を入力してください。',el=>Number(el.value)>0);
+
+   if(errors.length){
+     $('validationSummary')?.remove();
+     let box=document.createElement('div');box.id='validationSummary';box.className='validation-summary';
+     box.innerHTML='<b>確認が必要な項目があります。</b><br>'+errors.map(x=>'<button type="button" class="error-jump" data-target="'+x.id+'">→ '+x.msg+'</button>').join('<br>');
+     box.querySelectorAll('[data-target]').forEach(btn=>btn.onclick=()=>jumpToId(btn.dataset.target));
+     let btn=document.querySelector('button.primary[onclick="calc()"]');btn?.parentElement.insertBefore(box,btn);
+     jumpToId(errors[0].id);return;
+   }
+   $('validationSummary')?.remove();
+
+   calcStage='現在の生活費';jumpId='livingInputMode';updateLivingCalc();
+   calcStage='死亡後の生活費';jumpId='lifeMode';let l=life();
+   calcStage='教育費';jumpId=N('kc')?'by1':'kc';let e=et();
+   calcStage='住居費';jumpId='home';let h=house();
+   calcStage='葬儀・身辺整理費';jumpId='funeral';let o=N('funeral');
+   calcStage='配偶者収入';jumpId='spAge';let spv=spinc();
+   calcStage='配偶者の老齢年金';jumpId='spOldPension';let sop=spouseOldAgePensionRemainingAt(0);
+   calcStage='遺族基礎年金';jumpId=N('kc')?'by1':'hasSp';let b=basic();
+   calcStage='遺族厚生年金';jumpId='koseiJoinVal';let k=kp();
+   calcStage='中高齢寡婦加算';jumpId='spAge';let w=widowAdd();
+   calcStage='児童手当';jumpId=N('kc')?'by1':'kc';let ca=childAllowanceTotal();
+   calcStage='その他収入';jumpId='singleParentSection';let jfa=jfaTotal(),ci=continuingIncomeTotal();
+   calcStage='資産・保険';jumpId='cash';let a=N('cash')+N('invest')+N('other'),ins=N('insurance'),ret=N('retire');
+   let need=Math.max(0,l+e+h+o-spv-sop-b-k-w-ca-jfa-ci-a-ins-ret);
+   if(!Number.isFinite(need))throw new Error('計算結果が数値になりませんでした。入力値を確認してください。');
+
+   calcStage='診断結果の文章';jumpId='age';
+   let fl='';
+   if($('lifeModeVal').value==='none')fl='「死亡後の生活費は必要ない」を選択しているため、生活費は0円として計算しています。';
+   else if(!N('hasSp')&&!N('kc'))fl='配偶者・お子さんがいないため、死亡後の生活費は0円として計算しています。';
+   else if(!N('hasSp')&&N('kc'))fl='配偶者がいないため、お子さんが独立するまでの生活費を計算しています。';
+   else fl='配偶者の生活費を基準に、末子独立までは現在の80％、その後は60％で計算しています。';
+   if($('familyLogic'))$('familyLogic').textContent=fl;
+   let totalN=l+e+h+o,totalO=spv+sop+b+k+w+ca+jfa+ci+a+ins+ret;
+   if($('totalNeed'))$('totalNeed').textContent=F(totalN);
+   if($('totalOffset'))$('totalOffset').textContent=F(totalO);
+   let cs=$('coverageStatus');
+   if(cs){if(need>0){cs.className='status ng';cs.textContent='現在の条件では、あと約 '+F(need)+'万円の保障が不足する試算です。'}else{cs.className='status ok';cs.textContent='現在の入力条件では、必要資金を準備済み資金等でまかなえる試算です。'}}
+
+   calcStage='将来推移グラフ';jumpId='age';drawFuture(need);
+   calcStage='診断結果の内訳';jumpId='age';
+   let z={need,rl:l,re:e,rh:h,ro:o,rsp:spv,rsop:sop,rb:b,rk:k,rw:w,rca:ca,rjfa:jfa,rotherinc:ci,ra:a,ri:ins,rr:ret};
+   Object.entries(z).forEach(([id,v])=>{if($(id))$(id).textContent=F(v)});
+   let d='';for(let x=1;x<=N('kc');x++)d+=educationDetailHtml(x);
+   if($('edetail'))$('edetail').innerHTML=d;
+   if($('result')){$('result').style.display='block';$('result').scrollIntoView({behavior:'smooth',block:'start'})}
+ }catch(err){
+   console.error(err);
+   $('validationSummary')?.remove();
+   let box=document.createElement('div');box.id='validationSummary';box.className='validation-summary';
+   let detail=(err&&err.message)?err.message:String(err),safe=detail.replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+   box.innerHTML='<b>診断処理でエラーが発生しました。</b><br>発生箇所：'+calcStage+'<br><b>エラー内容：</b> <small>'+safe+'</small><br><button type="button" id="errorReturnBtn" class="error-jump">→ この計算に関係する入力欄へ戻る</button>';
+   let btn=document.querySelector('button.primary[onclick="calc()"]');btn?.parentElement.insertBefore(box,btn);
+   $('errorReturnBtn').onclick=()=>jumpToId(jumpId);
+   box.scrollIntoView({behavior:'smooth',block:'center'});
+ }
+}
+homeUI();danUI();draw();refreshSingleParentIncomeUI();syncLifeMode();setKosei($('koseiJoinVal').value,document.querySelector('#koseiJoin .on'));updateLivingCalc();updateLifeHint();
+
+['jfaConfirmedMonthly','supportMonthly','supportYears','otherIncomeAnnual','otherIncomeYears'].forEach(id=>$(id)?.addEventListener('input',updateBenefits));
+document.addEventListener('change',(ev)=>{
+ let m=ev.target.id&&ev.target.id.match(/^dob(\d+)$/);
+ if(m){syncChildAge(Number(m[1]));updateBenefits();}
+ if(ev.target.id&&(/^econ\d+$/.test(ev.target.id)||/^dis\d+$/.test(ev.target.id)))updateBenefits();
+});
+
+
+document.addEventListener('input',(ev)=>{
+ let id=ev.target.id||'';
+ let m=id.match(/^b([ymd])(\d+)$/);
+ if(m){
+   cleanBirthInput(ev.target,m[1]==='y'?4:2);
+   syncChildAge(Number(m[2]));
+   updateBenefits();updateLivingCalc();
+ }
+});
+
+document.addEventListener('change',(ev)=>{
+ if(/^(elem|mid|high|post|currentPost|grad|vocYears)\d+$/.test(ev.target.id||'')){updateBenefits();}
+});
+
+function refreshSingleParentIncomeUI(){
+ const isSingle=(N('hasSp')===0 && N('kc')>0);
+ if($('singleParent'))$('singleParent').value=isSingle?'yes':'no';
+ if($('singleParentSection'))$('singleParentSection').classList.toggle('hidden',!isSingle);
+ if($('singleParentBox'))$('singleParentBox').classList.toggle('hidden',!isSingle);
+ if($('notSingleParentNote'))$('notSingleParentNote').classList.add('hidden');
+ if($('jfaAmountBox'))$('jfaAmountBox').classList.toggle('hidden',$('jfaStatus')?.value!=='receiving');
+ if($('supportBox'))$('supportBox').classList.toggle('hidden',$('supportStatus')?.value!=='yes');
+ if($('supportCustomLabel'))$('supportCustomLabel').classList.toggle('hidden',$('supportEndType')?.value!=='custom');
+ updateLivingCalc();
+}
+document.addEventListener('change',e=>{
+ if(['singleParent','jfaStatus','supportStatus','supportEndType'].includes(e.target.id))refreshSingleParentIncomeUI();
+ if(e.target.id==='jfaInputMode')updateJfaInputUI();
+});
+setTimeout(refreshSingleParentIncomeUI,0);
+
+document.addEventListener('input',e=>{
+ if(['jfaConfirmedMonthly','jfaDepositAmount','supportMonthly','otherCurrentMonthly','headGrossIncome','spGrossIncome','annualSavingNow'].includes(e.target.id))updateLivingCalc();
+});
+document.addEventListener('change',e=>{
+ if(['singleParent','jfaStatus','supportStatus'].includes(e.target.id))setTimeout(updateLivingCalc,0);
+});
+
+function spouseAfterUI(){
+ $('spAfterCustom')?.classList.toggle('hidden',$('spAfterMode')?.value!=='custom');
+ updateLivingCalc();
+}
+document.addEventListener('change',e=>{
+ if(e.target.id==='home')homeUI();
+ if(e.target.id==='danshin')danUI();
+ if(e.target.id==='spAfterMode')spouseAfterUI();
+ if(e.target.id==='netRate'){
+   $('netRateCustomBox')?.classList.toggle('hidden',e.target.value!=='custom');updateLivingCalc();
+ }
+ if(/^(elem|mid|high|currentPost|post|grad|vocYears|residence)\d+$/.test(e.target.id||''))updateLivingCalc();
+});
+document.addEventListener('input',e=>{
+ if(['headGrossIncome','spGrossIncome','spIncomeCustom','mortgageMonthly','mortgageBonusAnnual','rentMonthly','ownedMonthlyCost','netRateCustom','annualSavingNow','jfaConfirmedMonthly','jfaDepositAmount','supportMonthly','otherCurrentMonthly','educationNowOverride'].includes(e.target.id))updateLivingCalc();
+});
+setTimeout(()=>{homeUI();spouseAfterUI();updateJfaInputUI();updateLivingCalc();},0);
+
+// 生活費は、どの関連入力を変更しても即時再計算する。
+// IDの個別列挙に依存しないことで、将来項目を追加しても連携漏れを防ぐ。
+document.addEventListener('input',function(e){
+ if(e.target && e.target.matches('input,select')){
+   try{updateLivingCalc();}catch(err){console.error('living-recalc',err);}
+ }
+});
+document.addEventListener('change',function(e){
+ if(e.target && e.target.matches('input,select')){
+   try{updateLivingCalc();}catch(err){console.error('living-recalc',err);}
+ }
+});
+</script></main></body></html>
