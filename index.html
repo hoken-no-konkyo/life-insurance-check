@@ -223,6 +223,9 @@ label > select{
 
 <div id="loanCurrentBox">
  <label>住宅ローン残高（万円）<input id="loan" type="number" min="0" value="1800"></label>
+ <label>住宅ローンの残り返済期間（約・年）
+ <small>現在から完済までのおおよその年数を入力してください。将来の必要保障額で、ローン残高が減っていく目安に使います。</small>
+ <input id="loanYearsRemaining" type="number" min="0" max="50" step="1" value="20" inputmode="numeric"></label>
  <label>毎月の住宅ローン返済額（万円）<input id="mortgageMonthly" type="number" min="0" step="0.1" value="6"></label>
  <label>年間のボーナス返済額（万円）<input id="mortgageBonusAnnual" type="number" min="0" step="0.1" value="0"></label>
  <label>団信<small>世帯主の死亡時に住宅ローンが返済される契約かを選択。</small>
@@ -850,7 +853,7 @@ function widowAdd(){
 }
 
 
-const BASE_DATE=new Date('2026-09-19T00:00:00');
+const BASE_DATE=(()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate());})();
 function cleanBirthInput(el,maxLen){
  if(!el)return;
  el.value=el.value.replace(/[^0-9]/g,'').slice(0,maxLen);
@@ -1105,7 +1108,7 @@ function futureNeedAt(years){
  // 教育費は「その時点から先にまだ残っている分」だけを積み上げる。
  let edu=0;for(let i=1;i<=c;i++)edu+=educationRemainingAt(i,years);
 
- // 住居費もその時点以降の残期間。ローン残高は簡易的に35年均等減少で概算。
+ // 住居費もその時点以降の残期間。ローン残高は入力された残り返済期間で均等減少する簡易概算。
  let housing=0,survivors=hasSp||c>0;
  if(survivors){
    let total=hasSp
@@ -1114,7 +1117,9 @@ function futureNeedAt(years){
    let rec=Math.max(0,N('housing'))*12*total;
    let tax=$('home').value==='rent'?0:Math.max(0,N('propertyTaxAnnual'))*total;
    if($('home').value==='loan'){
-     let loanRem=Math.max(0,N('loan')*(1-years/35));
+     const term=Math.max(0,N('loanYearsRemaining'));
+     // 残存期間が0なら将来時点のローン残高も0。元本の減り方は簡易的に直線近似する。
+     const loanRem=term>0 ? Math.max(0,N('loan')*((term-years)/term)) : 0;
      let share=Math.max(0,Math.min(100,N('shareVal')))/100;
      housing=($('danshin').value==='yes'?loanRem*(1-share):loanRem)+rec+tax;
    }else housing=rec+tax;
