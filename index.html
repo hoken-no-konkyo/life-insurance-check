@@ -124,7 +124,7 @@ label > select{
 </style>
 
 <style>
-/* Ver.24.20: product-facing copy/UI polish only */
+/* Ver.24.21: product-facing copy/UI polish only */
 .hero> b{display:inline-block;font-size:12px;color:var(--g);background:#edf8f3;padding:5px 9px;border-radius:999px}
 @media(max-width:520px){
   h1{font-size:23px;line-height:1.3}
@@ -138,10 +138,10 @@ label > select{
 }
 </style>
 </head><body><main>
-<div class="brand">📖🌱 ホケンの根拠</div><section class="hero"><b>Ver.24.20</b><h1>わが家の必要保障額診断</h1><p class="muted">必要なお金と、家族に残るお金を整理して不足保障額の目安を計算します。</p><div class="notice"><b>入力内容は保存・外部送信しません。</b> 計算はこのページ内だけで行います。</div></section>
+<div class="brand">📖🌱 ホケンの根拠</div><section class="hero"><b>Ver.24.21</b><h1>わが家の必要保障額診断</h1><p class="muted">必要なお金と、家族に残るお金を整理して不足保障額の目安を計算します。</p><div class="notice"><b>入力内容は保存・外部送信しません。</b> 計算はこのページ内だけで行います。</div></section>
 
 <section class="card"><h2>① 家族</h2>
-<label>世帯主の年齢<input id="age" type="number" min="18" max="99" value="40"></label><label>世帯主の性別<select id="headSex"><option value="male">男性</option><option value="female">女性</option></select></label><label>働き方<select id="work">
+<label>世帯主の年齢<input id="age" type="number" min="18" max="99" placeholder="例：40"></label><label>世帯主の性別<select id="headSex"><option value="male">男性</option><option value="female">女性</option></select></label><label>働き方<select id="work">
 <option value="employee">会社員</option>
 <option value="public">公務員</option>
 <option value="part">パート・アルバイト</option>
@@ -150,11 +150,11 @@ label > select{
 </select></label>
 <label>世帯主の現在の税込年収（万円）
 <small>源泉徴収票などに記載されている、おおよその税込年収を入力してください。</small>
-<input id="headGrossIncome" type="number" min="0" value="500"></label>
+<input id="headGrossIncome" type="number" min="0" placeholder="例：500"></label>
 <div class="q">これまでの年金について</div>
 <label>20歳以降、年金を払っていない期間
 <select id="headPensionGapMode"><option value="none">ほとんどない</option><option value="yes">ある</option><option value="unknown">わからない</option></select></label>
-<div id="headPensionGapDetail" class="hidden"><label>払っていなかった期間（約・年）<input id="headPensionGapYears" type="number" min="0" max="40" step="0.5" value="0"></label></div>
+<div id="headPensionGapDetail" class="hidden"><label>払っていなかった期間（約・年）<input id="headPensionGapYears" type="number" min="0" max="40" step="0.5" placeholder="例：2"></label></div>
 <small>会社員・公務員として厚生年金に入っていた期間も、基礎年金の加入期間に含まれます。</small>
 <div class="q">現在、会社員・公務員などで厚生年金に加入していますか？</div>
 <div class="choices" id="koseiJoin">
@@ -166,32 +166,32 @@ label > select{
 <div id="koseiDetail">
 <label>厚生年金に加入して働いた期間（約・年）
 <small>これまで厚生年金に加入して働いた期間の合計。おおよそで構いません。</small>
-<input id="koseiYears" type="number" min="0" max="60" value="18"></label>
+<input id="koseiYears" type="number" min="0" max="60" placeholder="例：18"></label>
 <div id="headAvgPayWrap" class="hidden"><label>その期間のおおよその平均年収（万円）
 <small>厚生年金に加入していた期間全体のおおよその平均です。正確でなくても構いません。</small>
-<input id="avgAnnualPay" type="number" min="0" value="500"></label></div>
+<input id="avgAnnualPay" type="number" min="0" placeholder="例：500"></label></div>
 </div>
 <div class="q">配偶者</div><div class="choices two" id="spb"><button type="button" onclick="sp(1,this)">いる</button><button class="on" type="button" onclick="sp(0,this)">いない</button></div><input id="hasSp" type="hidden" value="0">
-<div id="spa" class="hidden"><label>配偶者の年齢<input id="spAge" type="number" min="1" max="99" inputmode="numeric" value="38" oninput="updateLifeHint()"></label>
+<div id="spa" class="hidden"><label>配偶者の年齢<input id="spAge" type="number" min="1" max="99" inputmode="numeric" placeholder="例：38" oninput="updateLifeHint()"></label>
 <label>配偶者の性別<select id="spSex" onchange="updateLifeHint()"><option value="female">女性</option><option value="male">男性</option></select></label>
-<label>配偶者の現在の税込年収（万円）<input id="spGrossIncome" type="number" min="0" value="120"></label>
+<label>配偶者の現在の税込年収（万円）<input id="spGrossIncome" type="number" min="0" placeholder="例：120"></label>
 <label>万一後の配偶者収入
 <select id="spAfterMode"><option value="same">現在と同程度として概算</option><option value="custom">別の金額を入力</option><option value="none">0円になる</option></select></label>
-<div id="spAfterCustom" class="hidden"><label>万一後の配偶者の年間手取り収入（万円）<input id="spIncomeCustom" type="number" min="0" value="0"></label></div>
-<label>配偶者の退職予定年齢<input id="spRetire" type="number" value="65"></label>
+<div id="spAfterCustom" class="hidden"><label>万一後の配偶者の年間手取り収入（万円）<input id="spIncomeCustom" type="number" min="0" placeholder="例：100"></label></div>
+<label>配偶者の退職予定年齢<input id="spRetire" type="number" placeholder="例：65"></label>
 <div class="q">配偶者の65歳以降の年金</div>
 <label>年金の見込額はわかりますか？
 <select id="spPensionMode"><option value="estimate">わからないので自動で概算</option><option value="known">わかるので金額を入力</option></select></label>
 <div id="spPensionKnown" class="hidden"><label>65歳以降の老齢年金見込額（年額・万円）
-<input id="spOldPension" type="number" min="0" step="0.1" value="0">
+<input id="spOldPension" type="number" min="0" step="0.1" placeholder="例：120">
 <small>ねんきん定期便・ねんきんネット等で確認できる見込額を入力してください。</small></label></div>
 <div id="spPensionEstimate">
 <label>20歳以降、年金を払っていない期間
 <select id="spPensionGapMode"><option value="none">ほとんどない</option><option value="yes">ある</option><option value="unknown">わからない</option></select></label>
-<div id="spPensionGapDetail" class="hidden"><label>払っていなかった期間（約・年）<input id="spPensionGapYears" type="number" min="0" max="40" step="0.5" value="0"></label></div>
+<div id="spPensionGapDetail" class="hidden"><label>払っていなかった期間（約・年）<input id="spPensionGapYears" type="number" min="0" max="40" step="0.5" placeholder="例：2"></label></div>
 <label>現在、厚生年金に加入していますか？<select id="spKoseiNow"><option value="yes">はい</option><option value="no">いいえ</option><option value="unknown">わからない</option></select></label>
-<label>厚生年金に加入して働いた期間（約・年）<input id="spKoseiYears" type="number" min="0" max="60" step="0.5" value="0"></label>
-<label>その期間のおおよその平均年収（万円）<input id="spAvgAnnualPay" type="number" min="0" step="10" value="0"></label>
+<label>厚生年金に加入して働いた期間（約・年）<input id="spKoseiYears" type="number" min="0" max="60" step="0.5" placeholder="例：15"></label>
+<label>その期間のおおよその平均年収（万円）<input id="spAvgAnnualPay" type="number" min="0" step="10" placeholder="例：300"></label>
 <div class="notice" id="spPensionEstimateResult">65歳以降の老齢年金をここから概算します。</div>
 <small>概算です。免除・納付猶予、過去の報酬、加入時期などにより実際の年金額とは異なります。</small>
 </div></div>
@@ -214,12 +214,12 @@ label > select{
  </select></label>
  <div id="jfaMonthlyBox">
    <label>現在の児童扶養手当（月額・万円）
-   <input id="jfaConfirmedMonthly" type="number" oninput="updateLivingCalc()" min="0" value="0" step="0.1">
+   <input id="jfaConfirmedMonthly" type="number" oninput="updateLivingCalc()" min="0" step="0.1" placeholder="例：4.8">
    <small>例：月額48,050円なら「48050」と入力します。</small></label>
  </div>
  <div id="jfaDepositBox" class="hidden">
    <label>直近の振込額（2か月分・万円）
-   <input id="jfaDepositAmount" type="number" oninput="updateJfaInputUI();updateLivingCalc()" min="0" value="0" step="0.1">
+   <input id="jfaDepositAmount" type="number" oninput="updateJfaInputUI();updateLivingCalc()" min="0" step="0.1" placeholder="例：9.6">
    <small>通常の2か月分の振込額を「万円」で入力してください。例：10万円なら「10」。自動で÷2して月額に換算します。</small></label>
    <div class="result"><div class="row"><span>月額換算</span><b><span id="jfaConvertedMonthly">0</span>円／月</b></div></div>
  </div>
@@ -227,7 +227,7 @@ label > select{
  <label>現在、養育費を受け取っていますか？
  <select id="supportStatus" onchange="refreshSingleParentIncomeUI();updateLivingCalc()"><option value="no">いいえ</option><option value="yes">はい</option></select></label>
  <div id="supportBox" class="hidden">
-  <label>現在の養育費（月額・万円）<input id="supportMonthly" type="number" oninput="updateLivingCalc()" min="0" value="0" step="0.1"></label>
+  <label>現在の養育費（月額・万円）<input id="supportMonthly" type="number" oninput="updateLivingCalc()" min="0" step="0.1" placeholder="例：5"></label>
   <label>現在の取り決めでは、いつまで受け取る予定ですか？
   <select id="supportEndType">
    <option value="independence">子どもが経済的に独立するまで</option>
@@ -236,11 +236,11 @@ label > select{
   </select>
   <small>養育費は18歳で必ず終了するものではありません。実際の取り決めに合わせてください。</small></label>
   <label id="supportCustomLabel" class="hidden">あと何年間受け取る予定ですか？
-  <input id="supportCustomYears" type="number" min="0" max="30" value="0"></label>
+  <input id="supportCustomYears" type="number" min="0" max="30" placeholder="例：10"></label>
  </div>
  <label>その他の現在の収入（月額・万円）
 <small>児童扶養手当・養育費以外で、現在の生活費に使っている定期的な収入があれば入力してください。例：仕送り、定期的な給付など。なければ0円。</small>
-<input id="otherCurrentMonthly" type="number" oninput="updateLivingCalc()" min="0" value="0" step="0.1"></label>
+<input id="otherCurrentMonthly" type="number" oninput="updateLivingCalc()" min="0" step="0.1" placeholder="例：2"></label>
 <div class="result" style="margin-top:12px">
  <div class="section">現在の世帯収入（額面ベース）</div>
  <div class="row"><span>本人の税込年収</span><b><span id="grossEarnedAnnualDisplay">0</span>万円／年</b></div>
@@ -264,45 +264,45 @@ label > select{
 <select id="home"><option value="loan">持ち家・住宅ローンあり</option><option value="owned">持ち家・ローンなし</option><option value="rent">賃貸</option></select></label>
 
 <div id="loanCurrentBox">
- <label>住宅ローン残高（万円）<input id="loan" type="number" min="0" value="1800"></label>
+ <label>住宅ローン残高（万円）<input id="loan" type="number" min="0" placeholder="例：1800"></label>
  <label>住宅ローンの残り返済期間（約・年）
  <small>現在から完済までのおおよその年数を入力してください。将来の必要保障額で、ローン残高が減っていく目安に使います。</small>
- <input id="loanYearsRemaining" type="number" min="0" max="50" step="1" value="20" inputmode="numeric"></label>
- <label>毎月の住宅ローン返済額（万円）<input id="mortgageMonthly" type="number" min="0" step="0.1" value="6"></label>
- <label>年間のボーナス返済額（万円）<input id="mortgageBonusAnnual" type="number" min="0" step="0.1" value="0"></label>
+ <input id="loanYearsRemaining" type="number" min="0" max="50" step="1" placeholder="例：20" inputmode="numeric"></label>
+ <label>毎月の住宅ローン返済額（万円）<input id="mortgageMonthly" type="number" min="0" step="0.1" placeholder="例：6"></label>
+ <label>年間のボーナス返済額（万円）<input id="mortgageBonusAnnual" type="number" min="0" step="0.1" placeholder="例：0"></label>
  <label>団信<small>世帯主の死亡時に住宅ローンが返済される契約かを選択。</small>
  <select id="danshin"><option value="yes">加入している</option><option value="no">加入していない</option><option value="unknown">わからない</option></select></label>
  <div id="share"><label>世帯主のローン負担割合<select id="shareVal"><option value="100">100％</option><option value="50">夫婦で半々（50％）</option></select></label></div>
 </div>
 
 <div id="rentCurrentBox" class="hidden">
- <label>現在の家賃（月額・万円）<input id="rentMonthly" type="number" min="0" step="0.1" value="8"></label>
+ <label>現在の家賃（月額・万円）<input id="rentMonthly" type="number" min="0" step="0.1" placeholder="例：8"></label>
 </div>
 
 <div id="ownedCurrentBox" class="hidden">
- <label>現在の管理費・修繕積立等（月額・万円）<input id="ownedMonthlyCost" type="number" min="0" step="0.1" value="0"></label>
+ <label>現在の管理費・修繕積立等（月額・万円）<input id="ownedMonthlyCost" type="number" min="0" step="0.1" placeholder="例：2"></label>
 </div>
 
 <div id="propertyTaxBox">
  <label>固定資産税・都市計画税（年間）
  <small>持ち家の場合に入力します。納税通知書などの年間額を目安にしてください。都市計画税がかかる場合は合計額を入力します。</small>
- <div class="input-unit-row"><input id="propertyTaxAnnual" type="number" min="0" step="0.1" value="0"><span>万円／年</span></div></label>
+ <div class="input-unit-row"><input id="propertyTaxAnnual" type="number" min="0" step="0.1" placeholder="例：12"><span>万円／年</span></div></label>
 </div>
 
 <label>万一後も残る住居費（固定資産税を除く・万円／月）
 <small>住宅ローン返済額と固定資産税・都市計画税はここには入れません。管理費・修繕積立金など、万一後も続くその他の住居費を入力してください。</small>
-<input id="housing" type="number" min="0" step="0.1" value="0"></label>
+<input id="housing" type="number" min="0" step="0.1" placeholder="例：2"></label>
 </section>
 
 
 
 <section class="card"><h2>⑤ 葬儀・整理資金</h2><label>葬儀・身辺整理費（万円）
 <small>葬儀、お寺へのお布施・宗教者への謝礼、お墓・納骨・永代供養、遺品整理など、万一のときに必要になりそうな費用をまとめて入力します。お墓がすでにある場合、新たなお墓の費用は不要です。金額は地域・形式・宗派によって大きく異なるため、ご家庭の希望に合わせて見積もってください。</small>
-<input id="funeral" type="number" value="200"></label></section>
+<input id="funeral" type="number" placeholder="例：200"></label></section>
 
-<section class="card"><h2>⑥ 準備できるお金</h2><label>預貯金（万円）<input id="cash" type="number" value="500"></label><label>現在の運用資産残高（万円）<small>NISA・株式・投資信託など、現在保有している運用資産の合計額を入力してください。</small><input id="invest" type="number" value="200"></label><label>その他資産（万円）
+<section class="card"><h2>⑥ 準備できるお金</h2><label>預貯金（万円）<input id="cash" type="number" placeholder="例：500"></label><label>現在の運用資産残高（万円）<small>NISA・株式・投資信託など、現在保有している運用資産の合計額を入力してください。</small><input id="invest" type="number" placeholder="例：200"></label><label>その他資産（万円）
 <small>土地・建物など、上記以外で万一の際に生活資金として使える資産があれば入力してください。不動産は購入価格ではなく、売却して現金化できるおおよその金額を目安にします。生活に必要で売却する予定のない自宅などは、無理に含めなくても構いません。</small>
-<input id="other" type="number" value="0"></label><label>現在加入している死亡保険の保障額（万円）<small>世帯主が現在亡くなった場合に受け取れる死亡保険金の合計額を入力してください。</small><input id="insurance" type="number" value="1000"></label><label>死亡退職金・弔慰金等（万円）<small>世帯主が現在亡くなった場合に勤務先などから支給される死亡退職金・弔慰金等。将来の通常退職時の退職金とは別。分からなければ0円。</small><input id="retire" type="number" value="0"></label></section>
+<input id="other" type="number" placeholder="例：0"></label><label>現在加入している死亡保険の保障額（万円）<small>世帯主が現在亡くなった場合に受け取れる死亡保険金の合計額を入力してください。</small><input id="insurance" type="number" placeholder="例：1000"></label><label>死亡退職金・弔慰金等（万円）<small>世帯主が現在亡くなった場合に勤務先などから支給される死亡退職金・弔慰金等。将来の通常退職時の退職金とは別。分からなければ0円。</small><input id="retire" type="number" placeholder="例：0"></label></section>
 
 <section class="card"><h2>⑦ 子育て給付・その他の継続収入</h2>
 <div class="notice"><b>児童手当はお子さんの年齢・進路情報から自動で概算します。</b></div>
@@ -336,7 +336,7 @@ label > select{
 <div id="livingAuto">
  <label>手取りの目安
  <select id="netRate"><option value="0.80">80％</option><option value="0.75" selected>75％</option><option value="0.70">70％</option><option value="custom">自分で設定</option></select></label>
- <div id="netRateCustomBox" class="hidden"><label>手取り換算率（％）<input id="netRateCustom" type="number" min="40" max="100" value="75"></label></div>
+ <div id="netRateCustomBox" class="hidden"><label>手取り換算率（％）<input id="netRateCustom" type="number" min="40" max="100" placeholder="例：75"></label></div>
  <small>税込年収から手取り額を概算するための設定です。実際の手取り額とは異なる場合があります。</small>
 
  <div class="result" style="margin-top:14px">
@@ -355,7 +355,7 @@ label > select{
 
  <label>年間の貯蓄・積立額（万円／年）
  <small>預貯金やNISAなど、年間で積み立てている金額を入力してください。</small>
- <input id="annualSavingNow" type="number" min="0" value="0"></label>
+ <input id="annualSavingNow" type="number" min="0" placeholder="例：0"></label>
 
  <div class="notice" style="margin-top:14px"><b>自動計算について</b><br>手取り収入や現在受け取っている手当等から、住宅費・教育費・貯蓄を差し引いて生活費を推計します。</div>
  <div class="hero living-summary" style="margin-top:14px">
@@ -388,7 +388,7 @@ label > select{
 <div id="livingManual" class="hidden">
  <label>現在の生活費（万円／月）
  <small>住宅費・教育費・貯蓄を除いた金額を入力してください。</small>
- <input id="livingManualValue" type="number" min="0" step="0.1" value="20"></label>
+ <input id="livingManualValue" type="number" min="0" step="0.1" placeholder="例：20"></label>
 </div>
 <input id="living" type="hidden" value="0">
 
@@ -396,7 +396,7 @@ label > select{
 <div class="q">生活費を計算する期間</div>
 <div class="choices" id="lifeMode"><button class="on" type="button" onclick="setLifeMode('avg',this)">平均余命まで</button><button type="button" onclick="setLifeMode('custom',this)">自分で設定</button><button type="button" onclick="setLifeMode('none',this)">死亡後の生活費は必要ない</button></div>
 <input id="lifeModeVal" type="hidden" value="avg">
-<div id="customUntil" class="hidden"><label>何歳まで計算しますか？<input id="until" type="number" min="18" max="110" value="85"></label></div>
+<div id="customUntil" class="hidden"><label>何歳まで計算しますか？<input id="until" type="number" min="18" max="110" placeholder="例：85"></label></div>
 <div id="lifeHint" class="notice"></div>
 </section>
 <section class="card"><h2>⑩ 診断</h2><button class="primary" onclick="calc()">わが家の必要保障額を診断する</button></section>
