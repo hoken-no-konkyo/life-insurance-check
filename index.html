@@ -40,19 +40,22 @@ label > select{
 
 .residence-radio-row{display:flex;align-items:center;gap:18px;flex-wrap:nowrap;margin-top:7px}
 .residence-radio{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer;font-size:14px;font-weight:500}
-.residence-radio input[type="radio"]{width:18px;height:18px;margin:0;accent-color:#173a63;cursor:pointer;flex:0 0 auto}
-@media(max-width:390px){.residence-radio-row{gap:9px}.residence-radio{font-size:12.5px}}
+.residence-radio input[type="radio"]{width:14px;height:14px;margin:0;accent-color:#173a63;cursor:pointer;flex:0 0 auto}
+@media(max-width:390px){.residence-radio-row{gap:7px}.residence-radio{font-size:11.5px;letter-spacing:-.15px}}
 
 .choice-radio-row{display:flex;align-items:center;gap:20px;flex-wrap:nowrap;margin-top:7px}
 .choice-radio{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer;font-size:14px;font-weight:500}
-.choice-radio input[type="radio"]{width:18px;height:18px;margin:0;accent-color:#173a63;cursor:pointer}
+.choice-radio input[type="radio"]{width:14px;height:14px;margin:0;accent-color:#173a63;cursor:pointer;flex:0 0 auto}
 .conditional-residence{margin-top:10px}
+
+#spAfterMode{width:min(100%,430px);max-width:100%}
+@media(max-width:600px){#spAfterMode{width:100%;font-size:14px}}
 </style><style>
 .birth-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
 .birth-row input{display:inline-block!important;margin:0!important;text-align:center}.birth-year{width:82px!important;min-width:82px!important}.birth-md{width:58px!important;min-width:58px!important}
 .age-badge{display:inline-block;margin-top:7px;padding:5px 10px;border-radius:8px;background:#f2f6f5;font-weight:700}
 </style></head><body><main>
-<div class="brand">📖🌱 ホケンの根拠</div><section class="hero"><b>商品化検証版 Ver.24.7</b><h1>わが家の必要保障額診断</h1><p class="muted">必要なお金と、家族に残るお金を整理して不足保障額の目安を計算します。</p><div class="notice"><b>入力内容は保存・外部送信しません。</b> 計算はこのページ内だけで行います。</div></section>
+<div class="brand">📖🌱 ホケンの根拠</div><section class="hero"><b>商品化検証版 Ver.24.8</b><h1>わが家の必要保障額診断</h1><p class="muted">必要なお金と、家族に残るお金を整理して不足保障額の目安を計算します。</p><div class="notice"><b>入力内容は保存・外部送信しません。</b> 計算はこのページ内だけで行います。</div></section>
 
 <section class="card"><h2>① 家族</h2>
 <label>世帯主の年齢<input id="age" type="number" min="18" max="99" value="40"></label><label>世帯主の性別<select id="headSex"><option value="male">男性</option><option value="female">女性</option></select></label><label>働き方<select id="work">
@@ -237,7 +240,7 @@ label > select{
   <div class="row"><span>年間の貯蓄・積立</span><b>▲<span id="savingNowDisplay">0</span>万円／年</b></div>
  </div>
  <label>現在の教育費を実額で上書き（万円／年・任意）
- <small>空欄なら上の統計目安を使います。実際に家計から出ている年間教育費が分かる場合はこちらを優先します。</small>
+ <small>空欄なら上の統計目安を使います。実際の年間教育費が分かる場合はこちらを優先します。例：授業料・給食費・教材費・学校納付金・通学費・塾や習い事など、教育のために家計から支払っている費用。</small>
  <input id="educationNowOverride" type="number" min="0" step="0.1" placeholder="例：60"></label>
 
  <label>年間の貯蓄・積立額（万円）
@@ -267,11 +270,9 @@ label > select{
 <div class="row"><span>その他の現在収入</span><b>＋<span id="livingOtherActual">0.0</span>万円／年</b></div>
 <div class="row"><span><b>現在の生活費</b></span><b><span id="livingCurrentAnnual">0.0</span>万円／年</b></div>
 <div style="font-size:12px;line-height:1.65;margin:8px 0">給与等の手取りから住宅費・教育費・貯蓄を差し引いた残額に、現在受け取っている児童扶養手当・養育費・その他収入を加えて、現在の生活費を推計します。</div>
-<small>自動計算された現在の生活費</small>
-  <div class="big" style="font-size:31px;margin:4px 0"><span id="livingAutoResult">0.0</span>万円／月</div>
-  <small>計算式：現在の推計手取り＋現在の手当等 − 住宅費 − 教育費 − 貯蓄・積立。住宅費と教育費を別枠で必要保障額に計上するため、ここでは差し引いています。</small>
+<small>計算式：現在の推計手取り＋現在の手当等 − 住宅費 − 教育費 − 貯蓄・積立。住宅費と教育費を別枠で必要保障額に計上するため、ここでは差し引いています。</small>
  </div>
- <div id="livingCalcWarning" class="warn hidden"></div>
+ <span id="livingAutoResult" class="hidden">0.0</span><div id="livingCalcWarning" class="warn hidden"></div>
 </div>
 
 <div id="livingManual" class="hidden">
