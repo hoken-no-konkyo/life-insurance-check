@@ -392,11 +392,8 @@ label > select{
 </div>
 <input id="living" type="hidden" value="0">
 
-<div class="notice"><b>死亡後の生活費の計算</b><br>配偶者がいる場合は、末子独立までは現在の生活費の80％、その後は60％を目安にして計算します。配偶者がいない場合は、お子さんの独立まで80％で計算し、独立後は0円とします。</div>
-<div class="q">生活費を計算する期間</div>
-<div class="choices" id="lifeMode"><button class="on" type="button" onclick="setLifeMode('avg',this)">平均余命まで</button><button type="button" onclick="setLifeMode('custom',this)">自分で設定</button><button type="button" onclick="setLifeMode('none',this)">死亡後の生活費は必要ない</button></div>
-<input id="lifeModeVal" type="hidden" value="avg">
-<div id="customUntil" class="hidden"><label>何歳まで計算しますか？<input id="until" type="number" min="18" max="110" placeholder="例：85"></label></div>
+<div class="notice"><b>万一後の生活費は自動で計算します</b><br>配偶者がいる場合は、配偶者の平均余命をもとにした期間を目安に、末子独立までは現在の生活費の80％、その後は60％で計算します。配偶者がいない場合は、一番下のお子さんが経済的に独立するまでを80％で計算します。配偶者・お子さんがいない場合は0円です。</div>
+<input id="lifeModeVal" type="hidden" value="auto">
 <div id="lifeHint" class="notice"></div>
 </section>
 <section class="card"><h2>⑩ 診断</h2><button class="primary" onclick="calc()">わが家の必要保障額を診断する</button></section>
@@ -601,16 +598,8 @@ function updateLivingCalc(){
    w.textContent=rawLivingMonthlyYen<0?'現在の支出が家計収入を上回っています。各収入・支出を確認するか、「月額を直接入力」を選んでください。':'';
  }
 }
-function chooseLifeMode(v){
- let buttons=[...document.querySelectorAll('#lifeMode button')];
- let idx=v==='avg'?0:v==='custom'?1:2;
- $('lifeModeVal').value=v;buttons.forEach(x=>x.classList.remove('on'));if(buttons[idx])buttons[idx].classList.add('on');
- $('customUntil').classList.toggle('hidden',v!=='custom');updateLifeHint();
-}
-function syncLifeMode(){
- if(N('hasSp')===0 && N('kc')===0){chooseLifeMode('none')}
- else if($('lifeModeVal').value==='none'){chooseLifeMode('avg')}
-}
+function chooseLifeMode(){ updateLifeHint(); }
+function syncLifeMode(){ updateLifeHint(); }
 
 function kids(c,b){$('kc').value=c;mark('kb',b);draw();syncLifeMode();refreshSingleParentIncomeUI();updateBenefits();updateLivingCalc()}
 function draw(){
@@ -659,11 +648,21 @@ function danUI(){
 }
 const LE={male:{0:81.35,10:71.60,20:61.72,30:51.98,40:42.29,50:32.82,60:23.86,70:15.78,80:9.10,90:4.38},female:{0:87.33,10:77.56,20:67.67,30:57.85,40:48.05,50:38.41,60:29.07,70:20.10,80:11.95,90:5.66}};
 function lifeExp(age,sex){age=Math.max(0,Math.min(90,age));let lo=Math.floor(age/10)*10,hi=Math.min(90,lo+10);if(lo===hi)return LE[sex][lo];return LE[sex][lo]+(LE[sex][hi]-LE[sex][lo])*(age-lo)/(hi-lo)}
-function setLifeMode(v,b){$('lifeModeVal').value=v;mark('lifeMode',b);$('customUntil').classList.toggle('hidden',v!=='custom');updateLifeHint()}
+function setLifeMode(){ updateLifeHint(); }
 function lifeBaseAge(){return N('hasSp')?N('spAge'):N('age')}
 function lifeSex(){return N('hasSp')?$('spSex').value:$('headSex').value}
-function lifeEndAge(){if($('lifeModeVal').value==='none')return lifeBaseAge();if($('lifeModeVal').value==='custom')return N('until');let a=lifeBaseAge();return a+lifeExp(a,lifeSex())}
-function updateLifeHint(){if(!$('lifeHint'))return;if($('lifeModeVal').value==='none'){$('lifeHint').innerHTML='<b>死亡後の生活費は0円</b>として計算します。';return}if($('lifeModeVal').value==='custom'){$('lifeHint').innerHTML='指定した年齢まで生活費を計算します。';return}let a=lifeBaseAge(),e=lifeExp(a,lifeSex()),end=a+e;$('lifeHint').innerHTML=`${a}歳時点の平均余命 約${e.toFixed(1)}年 → <b>約${Math.round(end)}歳まで</b>を目安に計算します。`}
+function lifeEndAge(){
+ if(N('hasSp')===1){let a=N('spAge');return a+lifeExp(a,$('spSex').value)}
+ if(N('kc')>0)return N('age')+indY();
+ return N('age');
+}
+function updateLifeHint(){
+ if(!$('lifeHint'))return;
+ if(N('hasSp')===1){let a=N('spAge'),e=lifeExp(a,$('spSex').value),end=a+e;$('lifeHint').innerHTML=`配偶者${a||0}歳の平均余命をもとに、<b>約${Math.round(end)}歳まで</b>を目安に計算します。`;return}
+ if(N('kc')>0){$('lifeHint').innerHTML='配偶者がいないため、<b>一番下のお子さんが経済的に独立するまで</b>を目安に計算します。';return}
+ $('lifeHint').innerHTML='配偶者・お子さんがいないため、万一後の遺族生活費は<b>0円</b>として計算します。';
+}
+
 function stageCost(key,sel,age){
  let full=COST[sel]||0;if(!full)return 0;
  let cfg={kg:[3,6],es:[6,12],ms:[12,15],hs:[15,18],u:[18,22],g:[22,24]}[key];
@@ -740,9 +739,8 @@ function indY(){
 function life(){
  updateLivingCalc();
  let hasSp=N('hasSp')===1,c=N('kc'),annual=N('living')*12;
- if($('lifeModeVal')?.value==='none')return 0;
  if(hasSp){
-   let total=Math.max(0,lifeEndAge()-lifeBaseAge());
+   let total=Math.max(0,lifeExp(N('spAge'),$('spSex').value));
    let childYears=indY();
    let first=Math.min(childYears,total);
    return annual*(first*.8+Math.max(0,total-first)*.6);
@@ -753,7 +751,7 @@ function life(){
 function et(){let t=0;for(let i=1;i<=N('kc');i++)t+=eduRemaining(i);return t}
 function housingYearsRemaining(){
  let survivors=(N('hasSp')===1||N('kc')>0); if(!survivors)return 0;
- return N('hasSp')?Math.max(0,lifeEndAge()-lifeBaseAge()):Math.max(0,indY());
+ return N('hasSp')?Math.max(0,lifeExp(N('spAge'),$('spSex').value)):Math.max(0,indY());
 }
 function mortgageBalanceAfterDeath(){
  if($('home').value!=='loan')return 0;
@@ -824,9 +822,7 @@ function spouseOldAgePensionRemainingAt(years=0){
  let annual=spouseOldAgePensionAnnual();if(annual<=0)return 0;
  let age=N('spAge')+years;
  let horizon=0;
- if($('lifeModeVal').value==='none')return 0;
- if($('lifeModeVal').value==='custom')horizon=Math.max(0,N('until')-age);
- else horizon=Math.max(0,lifeExp(age,$('spSex').value));
+ horizon=Math.max(0,lifeExp(age,$('spSex').value));
  let startDelay=Math.max(0,65-age);
  let pensionYears=Math.max(0,horizon-startDelay);
  return annual*pensionYears;
@@ -1135,16 +1131,12 @@ function futureNeedAt(years){
 
  // その時点で万が一が起きた場合に「そこから先」に残る生活費を全期間積み上げる。
  let liv=0;
- if($('lifeModeVal').value!=='none'){
-   if(hasSp){
-     let baseAge=N('spAge')+years;
-     let total=$('lifeModeVal').value==='custom'
-       ?Math.max(0,N('until')-baseAge)
-       :Math.max(0,lifeExp(baseAge,$('spSex').value));
-     let first=Math.min(remChild,total);
-     liv=annualLiving*(first*.8+Math.max(0,total-first)*.6);
-   }else if(c) liv=annualLiving*remChild*.8;
- }
+ if(hasSp){
+   let baseAge=N('spAge')+years;
+   let total=Math.max(0,lifeExp(baseAge,$('spSex').value));
+   let first=Math.min(remChild,total);
+   liv=annualLiving*(first*.8+Math.max(0,total-first)*.6);
+ }else if(c) liv=annualLiving*remChild*.8;
 
  // 教育費は「その時点から先にまだ残っている分」だけを積み上げる。
  let edu=0;for(let i=1;i<=c;i++)edu+=educationRemainingAt(i,years);
@@ -1153,7 +1145,7 @@ function futureNeedAt(years){
  let housing=0,survivors=hasSp||c>0;
  if(survivors){
    let total=hasSp
-     ?($('lifeModeVal').value==='custom'?Math.max(0,N('until')-(N('spAge')+years)):Math.max(0,lifeExp(N('spAge')+years,$('spSex').value)))
+     ?Math.max(0,lifeExp(N('spAge')+years,$('spSex').value))
      :remChild;
    let rec=Math.max(0,N('housing'))*12*total;
    let tax=$('home').value==='rent'?0:Math.max(0,N('propertyTaxAnnual'))*total;
@@ -1221,7 +1213,7 @@ function calc(){
    $('validationSummary')?.remove();
 
    calcStage='現在の生活費';jumpId='livingInputMode';updateLivingCalc();
-   calcStage='死亡後の生活費';jumpId='lifeMode';let l=life();
+   calcStage='死亡後の生活費';jumpId='livingInputMode';let l=life();
    calcStage='教育費';jumpId=N('kc')?'by1':'kc';let e=et();
    calcStage='住居費';jumpId='home';let h=house();
    calcStage='葬儀・身辺整理費';jumpId='funeral';let o=N('funeral');
@@ -1238,10 +1230,9 @@ function calc(){
 
    calcStage='診断結果の文章';jumpId='age';
    let fl='';
-   if($('lifeModeVal').value==='none')fl='「死亡後の生活費は必要ない」を選択しているため、生活費は0円として計算しています。';
-   else if(!N('hasSp')&&!N('kc'))fl='配偶者・お子さんがいないため、死亡後の生活費は0円として計算しています。';
-   else if(!N('hasSp')&&N('kc'))fl='配偶者がいないため、お子さんが独立するまでの生活費を計算しています。';
-   else fl='配偶者の生活費を基準に、末子独立までは現在の80％、その後は60％で計算しています。';
+   if(!N('hasSp')&&!N('kc'))fl='配偶者・お子さんがいないため、万一後の遺族生活費は0円として計算しています。';
+   else if(!N('hasSp')&&N('kc'))fl='配偶者がいないため、一番下のお子さんが経済的に独立するまで、現在の生活費の80％で計算しています。';
+   else fl='配偶者の平均余命をもとにした期間を目安に、末子独立までは現在の生活費の80％、その後は60％で計算しています。';
    if($('familyLogic'))$('familyLogic').textContent=fl;
    let totalN=l+e+h+o,totalO=spv+sop+b+k+w+ca+jfa+ci+a+ins+ret;
    if($('totalNeed'))$('totalNeed').textContent=F(totalN);
