@@ -96,7 +96,7 @@ label > select{
 }
 </style>
 </head><body><main>
-<div class="brand">📖🌱 ホケンの根拠</div><section class="hero"><b>商品化検証版 Ver.24.13</b><h1>わが家の必要保障額診断</h1><p class="muted">必要なお金と、家族に残るお金を整理して不足保障額の目安を計算します。</p><div class="notice"><b>入力内容は保存・外部送信しません。</b> 計算はこのページ内だけで行います。</div></section>
+<div class="brand">📖🌱 ホケンの根拠</div><section class="hero"><b>商品化検証版 Ver.24.14</b><h1>わが家の必要保障額診断</h1><p class="muted">必要なお金と、家族に残るお金を整理して不足保障額の目安を計算します。</p><div class="notice"><b>入力内容は保存・外部送信しません。</b> 計算はこのページ内だけで行います。</div></section>
 
 <section class="card"><h2>① 家族</h2>
 <label>世帯主の年齢<input id="age" type="number" min="18" max="99" value="40"></label><label>世帯主の性別<select id="headSex"><option value="male">男性</option><option value="female">女性</option></select></label><label>働き方<select id="work">
@@ -109,7 +109,12 @@ label > select{
 <label>世帯主の現在の税込年収（万円）
 <small>源泉徴収票などに記載されている、おおよその税込年収を入力してください。</small>
 <input id="headGrossIncome" type="number" min="0" value="500"></label>
-<div class="q">現在、厚生年金に加入していますか？</div>
+<div class="q">これまでの年金について</div>
+<label>20歳以降、年金を払っていない期間
+<select id="headPensionGapMode"><option value="none">ほとんどない</option><option value="yes">ある</option><option value="unknown">わからない</option></select></label>
+<div id="headPensionGapDetail" class="hidden"><label>払っていなかった期間（約・年）<input id="headPensionGapYears" type="number" min="0" max="40" step="0.5" value="0"></label></div>
+<small>会社員・公務員として厚生年金に入っていた期間も、基礎年金の加入期間に含まれます。</small>
+<div class="q">現在、会社員・公務員などで厚生年金に加入していますか？</div>
 <div class="choices" id="koseiJoin">
  <button class="on" type="button" onclick="setKosei('yes',this)">はい</button>
  <button type="button" onclick="setKosei('no',this)">いいえ</button>
@@ -117,10 +122,10 @@ label > select{
 </div>
 <input id="koseiJoinVal" type="hidden" value="yes">
 <div id="koseiDetail">
-<label>これまでの厚生年金加入期間（年）
+<label>会社員・公務員として働いた期間（約・年）
 <small>これまで会社員・公務員などとして厚生年金に加入していた期間の合計。おおよそで構いません。</small>
 <input id="koseiYears" type="number" min="0" max="60" value="18"></label>
-<label>厚生年金加入期間中のおおよその平均年収（万円）
+<label>その期間のおおよその平均年収（万円）
 <small>遺族厚生年金の概算に使います。現在の年収ではなく、厚生年金に加入していた期間全体のおおよその平均です。分からない場合は「現在の税込年収」を目安として使えます。</small>
 <input id="avgAnnualPay" type="number" min="0" value="500"></label>
 </div>
@@ -132,9 +137,22 @@ label > select{
 <select id="spAfterMode"><option value="same">現在と同程度として概算</option><option value="custom">別の金額を入力</option><option value="none">0円になる</option></select></label>
 <div id="spAfterCustom" class="hidden"><label>万一後の配偶者の年間手取り収入（万円）<input id="spIncomeCustom" type="number" min="0" value="0"></label></div>
 <label>配偶者の退職予定年齢<input id="spRetire" type="number" value="65"></label>
-<label>配偶者の65歳以降の老齢年金見込額（年額・万円）
+<div class="q">配偶者の65歳以降の年金</div>
+<label>年金の見込額はわかりますか？
+<select id="spPensionMode"><option value="estimate">わからないので自動で概算</option><option value="known">わかるので金額を入力</option></select></label>
+<div id="spPensionKnown" class="hidden"><label>65歳以降の老齢年金見込額（年額・万円）
 <input id="spOldPension" type="number" min="0" step="0.1" value="0">
-<small>ねんきん定期便等で分かる場合に入力してください。分からない場合は0のままでも診断できます。</small></label></div>
+<small>ねんきん定期便・ねんきんネット等で確認できる見込額を入力してください。</small></label></div>
+<div id="spPensionEstimate">
+<label>20歳以降、年金を払っていない期間
+<select id="spPensionGapMode"><option value="none">ほとんどない</option><option value="yes">ある</option><option value="unknown">わからない</option></select></label>
+<div id="spPensionGapDetail" class="hidden"><label>払っていなかった期間（約・年）<input id="spPensionGapYears" type="number" min="0" max="40" step="0.5" value="0"></label></div>
+<label>現在、厚生年金に加入していますか？<select id="spKoseiNow"><option value="yes">はい</option><option value="no">いいえ</option><option value="unknown">わからない</option></select></label>
+<label>会社員・公務員として働いた期間（約・年）<input id="spKoseiYears" type="number" min="0" max="60" step="0.5" value="0"></label>
+<label>その期間のおおよその平均年収（万円）<input id="spAvgAnnualPay" type="number" min="0" step="10" value="0"></label>
+<div class="notice" id="spPensionEstimateResult">65歳以降の老齢年金をここから概算します。</div>
+<small>概算です。免除・納付猶予、過去の報酬、加入時期などにより実際の年金額とは異なります。</small>
+</div></div>
 <div class="q">現在のお子さんの人数</div><div class="choices" id="kb"><button class="on" type="button" onclick="kids(0,this)">0人</button><button type="button" onclick="kids(1,this)">1人</button><button type="button" onclick="kids(2,this)">2人</button><button type="button" onclick="kids(3,this)">3人</button><button type="button" onclick="kids(4,this)">4人</button><button type="button" onclick="kids(5,this)">5人</button></div><input id="kc" type="hidden" value="0"><div id="ka"></div>
 </section>
 
@@ -699,9 +717,35 @@ function spouseAfterAnnualNet(){
  return N('spGrossIncome')*netRateValue();
 }
 function spinc(){return spouseAfterAnnualNet()*Math.max(0,N('spRetire')-N('spAge'))}
+function spouseOldAgePensionAnnual(){
+ if(N('hasSp')!==1)return 0;
+ if(($('spPensionMode')?.value||'estimate')==='known')return N('spOldPension');
+ let age=N('spAge');
+ let gapMode=$('spPensionGapMode')?.value||'none';
+ let gapYears=gapMode==='yes'?N('spPensionGapYears'):0;
+ // 65歳時点を想定。今後60歳までは未納がない簡易前提。
+ let basicYears=Math.max(0,40-gapYears);
+ let basic=84.73*Math.min(40,basicYears)/40;
+ let pastYears=N('spKoseiYears');
+ let futureYears=(($('spKoseiNow')?.value||'no')==='yes')?Math.max(0,Math.min(60,N('spRetire'))-Math.max(20,age)):0;
+ let kYears=Math.max(0,pastYears+futureYears);
+ let avg=N('spAvgAnnualPay');
+ let kosei=(avg>0&&kYears>0)?(avg/12)*5.481/1000*(kYears*12):0;
+ return basic+kosei;
+}
+function updatePensionUi(){
+ let hm=$('headPensionGapMode'); if(hm&&$('headPensionGapDetail'))$('headPensionGapDetail').classList.toggle('hidden',hm.value!=='yes');
+ let mode=$('spPensionMode');
+ if(mode){
+   $('spPensionKnown')?.classList.toggle('hidden',mode.value!=='known');
+   $('spPensionEstimate')?.classList.toggle('hidden',mode.value!=='estimate');
+ }
+ let gm=$('spPensionGapMode'); if(gm&&$('spPensionGapDetail'))$('spPensionGapDetail').classList.toggle('hidden',gm.value!=='yes');
+ let out=$('spPensionEstimateResult'); if(out&&(!mode||mode.value==='estimate')) out.innerHTML='<b>概算：'+spouseOldAgePensionAnnual().toFixed(1)+'万円／年</b><br><span class="muted">65歳以降の老齢基礎年金＋老齢厚生年金の簡易目安</span>';
+}
 function spouseOldAgePensionRemainingAt(years=0){
  if(N('hasSp')!==1)return 0;
- let annual=N('spOldPension');if(annual<=0)return 0;
+ let annual=spouseOldAgePensionAnnual();if(annual<=0)return 0;
  let age=N('spAge')+years;
  let horizon=0;
  if($('lifeModeVal').value==='none')return 0;
@@ -1221,4 +1265,7 @@ document.addEventListener('change',function(e){
    try{updateLivingCalc();}catch(err){console.error('living-recalc',err);}
  }
 });
+
+['headPensionGapMode','headPensionGapYears','spPensionMode','spPensionGapMode','spPensionGapYears','spKoseiNow','spKoseiYears','spAvgAnnualPay','spAge','spRetire'].forEach(id=>{let el=$(id);if(el){el.addEventListener('input',updatePensionUi);el.addEventListener('change',updatePensionUi);}});
+updatePensionUi();
 </script></main></body></html>
