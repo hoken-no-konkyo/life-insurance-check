@@ -122,12 +122,12 @@ label > select{
 </div>
 <input id="koseiJoinVal" type="hidden" value="yes">
 <div id="koseiDetail">
-<label>会社員・公務員として働いた期間（約・年）
-<small>これまで会社員・公務員などとして厚生年金に加入していた期間の合計。おおよそで構いません。</small>
+<label>厚生年金に加入して働いた期間（約・年）
+<small>これまで厚生年金に加入して働いた期間の合計。おおよそで構いません。</small>
 <input id="koseiYears" type="number" min="0" max="60" value="18"></label>
-<label>その期間のおおよその平均年収（万円）
-<small>遺族厚生年金の概算に使います。現在の年収ではなく、厚生年金に加入していた期間全体のおおよその平均です。分からない場合は「現在の税込年収」を目安として使えます。</small>
-<input id="avgAnnualPay" type="number" min="0" value="500"></label>
+<div id="headAvgPayWrap" class="hidden"><label>その期間のおおよその平均年収（万円）
+<small>厚生年金に加入していた期間全体のおおよその平均です。正確でなくても構いません。</small>
+<input id="avgAnnualPay" type="number" min="0" value="500"></label></div>
 </div>
 <div class="q">配偶者</div><div class="choices two" id="spb"><button type="button" onclick="sp(1,this)">いる</button><button class="on" type="button" onclick="sp(0,this)">いない</button></div><input id="hasSp" type="hidden" value="0">
 <div id="spa" class="hidden"><label>配偶者の年齢<input id="spAge" type="number" min="1" max="99" inputmode="numeric" value="38" oninput="updateLifeHint()"></label>
@@ -148,7 +148,7 @@ label > select{
 <select id="spPensionGapMode"><option value="none">ほとんどない</option><option value="yes">ある</option><option value="unknown">わからない</option></select></label>
 <div id="spPensionGapDetail" class="hidden"><label>払っていなかった期間（約・年）<input id="spPensionGapYears" type="number" min="0" max="40" step="0.5" value="0"></label></div>
 <label>現在、厚生年金に加入していますか？<select id="spKoseiNow"><option value="yes">はい</option><option value="no">いいえ</option><option value="unknown">わからない</option></select></label>
-<label>会社員・公務員として働いた期間（約・年）<input id="spKoseiYears" type="number" min="0" max="60" step="0.5" value="0"></label>
+<label>厚生年金に加入して働いた期間（約・年）<input id="spKoseiYears" type="number" min="0" max="60" step="0.5" value="0"></label>
 <label>その期間のおおよその平均年収（万円）<input id="spAvgAnnualPay" type="number" min="0" step="10" value="0"></label>
 <div class="notice" id="spPensionEstimateResult">65歳以降の老齢年金をここから概算します。</div>
 <small>概算です。免除・納付猶予、過去の報酬、加入時期などにより実際の年金額とは異なります。</small>
@@ -733,7 +733,13 @@ function spouseOldAgePensionAnnual(){
  let kosei=(avg>0&&kYears>0)?(avg/12)*5.481/1000*(kYears*12):0;
  return basic+kosei;
 }
+function updatePensionConditionalFields(){
+ let hy=N('koseiYears'), sy=N('spKoseiYears');
+ if($('headAvgPayWrap'))$('headAvgPayWrap').classList.toggle('hidden',!(hy>0));
+ if($('spAvgPayWrap'))$('spAvgPayWrap').classList.toggle('hidden',!(sy>0));
+}
 function updatePensionUi(){
+ updatePensionConditionalFields();
  let hm=$('headPensionGapMode'); if(hm&&$('headPensionGapDetail'))$('headPensionGapDetail').classList.toggle('hidden',hm.value!=='yes');
  let mode=$('spPensionMode');
  if(mode){
@@ -899,8 +905,8 @@ function syncResidenceRadio(i){
 
 function postNeedsResidence(v){return ['national_h','national_s','private_h','private_s','junior','vocational'].includes(v);}
 function conditionalResidenceRadio(i,kind,label){
- let id=kind==='grad'?'gradResidence'+i:'residence'+i,name=kind==='grad'?'gradResidenceRadio'+i:'residenceRadio'+i;
- return `<div id="${kind}ResidenceWrap${i}" class="conditional-residence" style="display:none"><label>${label}</label><select id="${id}" style="display:none"><option value="home" selected>実家から通学</option><option value="away">自宅外（寮・一人暮らし等）</option></select><div class="residence-radio-row"><label class="residence-radio"><input type="radio" name="${name}" value="home" checked onchange="setCondResidence(${i},'${kind}',this.value)"> 実家から通学</label><label class="residence-radio"><input type="radio" name="${name}" value="away" onchange="setCondResidence(${i},'${kind}',this.value)"> 自宅外（寮・一人暮らし等）</label></div></div>`;
+ let id=kind==='grad'?'gradResidence'+i:'residence'+i;
+ return `<div id="${kind}ResidenceWrap${i}" class="conditional-residence" style="display:none"><label>${label}<select id="${id}"><option value="home" selected>実家から通学</option><option value="away">自宅外（寮・一人暮らし等）</option></select></label></div>`;
 }
 function setCondResidence(i,kind,v){let el=$(kind==='grad'?'gradResidence'+i:'residence'+i);if(el){el.value=v;el.dispatchEvent(new Event('change',{bubbles:true}));}}
 function updateResidenceVisibility(i){let post=$('post'+i)?.value||$('currentPost'+i)?.value||'none',grad=$('grad'+i)?.value||'none';let p=$('postResidenceWrap'+i),g=$('gradResidenceWrap'+i);if(p)p.style.display=postNeedsResidence(post)?'block':'none';if(g)g.style.display=(grad&&grad!=='none')?'block':'none';}
@@ -1187,7 +1193,7 @@ function calc(){
    box.scrollIntoView({behavior:'smooth',block:'center'});
  }
 }
-homeUI();danUI();draw();refreshSingleParentIncomeUI();syncLifeMode();setKosei($('koseiJoinVal').value,document.querySelector('#koseiJoin .on'));updateLivingCalc();updateLifeHint();
+homeUI();danUI();draw();refreshSingleParentIncomeUI();syncLifeMode();updatePensionConditionalFields();setKosei($('koseiJoinVal').value,document.querySelector('#koseiJoin .on'));updateLivingCalc();updateLifeHint();
 
 ['jfaConfirmedMonthly','supportMonthly','supportYears','otherIncomeAnnual','otherIncomeYears'].forEach(id=>$(id)?.addEventListener('input',updateBenefits));
 document.addEventListener('change',(ev)=>{
@@ -1266,6 +1272,6 @@ document.addEventListener('change',function(e){
  }
 });
 
-['headPensionGapMode','headPensionGapYears','spPensionMode','spPensionGapMode','spPensionGapYears','spKoseiNow','spKoseiYears','spAvgAnnualPay','spAge','spRetire'].forEach(id=>{let el=$(id);if(el){el.addEventListener('input',updatePensionUi);el.addEventListener('change',updatePensionUi);}});
+['headPensionGapMode','headPensionGapYears','koseiYears','spPensionMode','spPensionGapMode','spPensionGapYears','spKoseiNow','spKoseiYears','spAvgAnnualPay','spAge','spRetire'].forEach(id=>{let el=$(id);if(el){el.addEventListener('input',updatePensionUi);el.addEventListener('change',updatePensionUi);}});
 updatePensionUi();
 </script></main></body></html>
