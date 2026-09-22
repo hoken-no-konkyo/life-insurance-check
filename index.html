@@ -169,7 +169,7 @@ label > select{
 }
 </style>
 </head><body><main>
-<div class="brand">📖🌱 ホケンの根拠</div><section class="hero"><b>Ver.24.21</b><h1>わが家の必要保障額診断</h1><p class="muted">必要なお金と、家族に残るお金を整理して不足保障額の目安を計算します。</p><div class="notice"><b>入力内容は保存・外部送信しません。</b> 計算はこのページ内だけで行います。</div></section>
+<div class="brand">📖🌱 ホケンの根拠</div><section class="hero"><b>Ver.24.29</b><h1>わが家の必要保障額診断</h1><p class="muted">必要なお金と、家族に残るお金を整理して不足保障額の目安を計算します。</p><div class="notice"><b>入力内容は保存・外部送信しません。</b> 計算はこのページ内だけで行います。</div></section>
 
 <section class="card"><h2>① 家族</h2>
 <label>世帯主の年齢<input id="age" type="number" min="18" max="99" placeholder="例：40"></label><label>世帯主の性別<select id="headSex"><option value="male">男性</option><option value="female">女性</option></select></label><label>働き方<select id="work">
@@ -335,7 +335,7 @@ label > select{
 <small>土地・建物など、上記以外で万一の際に生活資金として使える資産があれば入力してください。不動産は購入価格ではなく、売却して現金化できるおおよその金額を目安にします。生活に必要で売却する予定のない自宅などは、無理に含めなくても構いません。</small>
 <input id="other" type="number" placeholder="例：0"></label><label>現在加入している死亡保険の保障額（万円）<small>世帯主が現在亡くなった場合に受け取れる死亡保険金の合計額を入力してください。</small><input id="insurance" type="number" placeholder="例：2000"></label><label>死亡退職金・弔慰金等（万円）<small>世帯主が現在亡くなった場合に勤務先などから支給される死亡退職金・弔慰金等。将来の通常退職時の退職金とは別。分からなければ0円。</small><input id="retire" type="number" placeholder="例：300"></label></section>
 
-<section class="card"><h2>⑦ 子育て給付・その他の継続収入</h2>
+<section class="card"><h2>⑦ 子育て給付</h2>
 <div class="notice"><b>児童手当はお子さんの年齢・進路情報から自動で概算します。</b></div>
 <div class="result">
  <div class="row"><span>現在の児童手当（月額・自動計算）</span><b><span id="caNow">0</span>円</b></div>
@@ -372,6 +372,7 @@ label > select{
 
  <div class="result" style="margin-top:14px">
   <div class="row"><span>給与・事業等の推計手取り</span><b><span id="earnedNetDisplay">0</span>万円／年</b></div>
+  <div class="row"><span>児童手当（自動計算・現在）</span><b>＋<span id="childAllowanceIncomeDisplay">0</span>万円／年（<span id="childAllowanceMonthlyDisplay">0</span>円／月）</b></div>
   <div class="row"><span>児童扶養手当（現在）</span><b>＋<span id="jfaIncomeDisplay">0</span>万円／年（<span id="jfaMonthlyDisplay">0</span>円／月）</b></div>
   <div class="row"><span>養育費（現在）</span><b>＋<span id="supportIncomeDisplay">0</span>万円／年（<span id="supportMonthlyDisplay">0</span>円／月）</b></div>
   <div class="row"><span>その他の現在収入</span><b>＋<span id="otherCurrentIncomeDisplay">0</span>万円／年（<span id="otherMonthlyDisplay">0</span>円／月）</b></div>
@@ -388,12 +389,13 @@ label > select{
  <small>預貯金やNISAなど、年間で積み立てている金額を入力してください。</small>
  <input id="annualSavingNow" type="number" min="0" placeholder="例：0"></label>
 
- <div class="notice" style="margin-top:14px"><b>自動計算について</b><br>手取り収入や現在受け取っている手当等から、住宅費・教育費・貯蓄を差し引いて生活費を推計します。</div>
+ <div class="notice" style="margin-top:14px"><b>自動計算について</b><br>夫婦の推計手取りに、児童手当（年齢・人数等から自動計算）や現在受け取っている手当等を加え、住宅費・教育費・貯蓄を差し引いて生活費を推計します。</div>
  <div class="hero living-summary" style="margin-top:14px">
   <div class="result" style="margin:12px 0">
  <div class="section">現在の生活費（自動計算）</div>
  <div class="row"><span>世帯主等の税込年収</span><b><span id="livingSalaryGrossAnnual">0.0</span>万円／年</b></div>
  <div class="row"><span>給与等の推計手取り</span><b><span id="livingSalaryTakehomeAnnual">0.0</span>万円／年</b></div>
+ <div class="row"><span>児童手当（自動計算）</span><b>＋<span id="livingChildAllowanceAnnual">0.0</span>万円／年</b></div>
  <div class="row"><span>児童扶養手当</span><b>＋<span id="livingJfaAnnual">0.0</span>万円／年</b></div>
  <div class="row"><span>養育費</span><b>＋<span id="livingSupportAnnual">0.0</span>万円／年</b></div>
  <div class="row"><span>その他の定期収入</span><b>＋<span id="livingOtherAnnual">0.0</span>万円／年</b></div>
@@ -405,12 +407,13 @@ label > select{
  <div class="row"><span>貯蓄・積立</span><b>－<span id="livingSavingAnnual">0.0</span>万円／年</b></div>
 </div>
 <div class="row"><span>給与等の推計手取りから住宅費・教育費・貯蓄を引いた残額</span><b><span id="livingEarnedRemainder">0.0</span>万円／年</b></div>
+<div class="row"><span>児童手当（自動計算）</span><b>＋<span id="livingChildAllowanceActual">0.0</span>万円／年</b></div>
 <div class="row"><span>児童扶養手当</span><b>＋<span id="livingJfaActual">0.0</span>万円／年</b></div>
 <div class="row"><span>養育費</span><b>＋<span id="livingSupportActual">0.0</span>万円／年</b></div>
 <div class="row"><span>その他の現在収入</span><b>＋<span id="livingOtherActual">0.0</span>万円／年</b></div>
 <div class="living-main"><span>現在の生活費（推計）</span><strong><span id="livingCurrentMonthly">0.0</span>万円／月</strong></div>
 <div class="living-annual">年額換算：<b><span id="livingCurrentAnnual">0.0</span>万円／年</b></div>
-<div style="font-size:12px;line-height:1.65;margin:8px 0">給与等の手取りから住宅費・教育費・貯蓄を差し引いた残額に、現在受け取っている児童扶養手当・養育費・その他収入を加えて、現在の生活費を推計します。</div>
+<div style="font-size:12px;line-height:1.65;margin:8px 0">給与等の手取りから住宅費・教育費・貯蓄を差し引いた残額に、児童手当（自動計算）・現在受け取っている児童扶養手当・養育費・その他収入を加えて、現在の生活費を推計します。</div>
 <small>住宅費と教育費は必要資金として別に計算するため、生活費の推計では差し引いています。</small>
  </div>
  <span id="livingAutoResult" class="hidden">0.0</span><div id="livingCalcWarning" class="warn hidden"></div>
@@ -438,7 +441,7 @@ label > select{
 <div class="section">これから必要保障額はどう変わる？</div>
 <div class="chart" id="futureChart"></div>
 <div class="notice">必要保障額はずっと同じではありません。子どもの成長、教育費の消化、資産形成などによって一般に減っていきます。</div>
-<div class="sourcebox"><b>この診断の考え方</b><br>必要資金（生活費・教育費・住居費・葬儀・身辺整理費）から、配偶者収入・公的遺族年金・資産・現在の死亡保障・死亡退職金等を差し引いて「不足保障額」を表示します。教育費と公的保障は統計・制度を使った概算です。児童手当は2026年制度を年齢別に自動計算します。児童扶養手当は所得・控除・公的年金との調整が複雑なため、必要保障額への反映は確認済みの実受給月額と受給見込期間を入力した場合に限ります。教育費は幼稚園～高校を文部科学省「令和5年度子供の学習費調査」訂正版、大学等の学費は令和7年度学生納付金調査・国立大学標準額を基礎にしています。大学等で「自宅外」を選んだ場合は、JASSO学生生活調査の自宅通学との差額を平均的な追加生活費として加算します。高校は授業料だけでなく学校外活動費等も含む平均的な家庭負担を使用しているため、「無償化＝0円」とはしていません。</div>
+<div class="sourcebox"><b>この診断の考え方</b><br>必要資金（生活費・教育費・住居費・葬儀・身辺整理費）から、配偶者収入・公的遺族年金・資産・現在の死亡保障・死亡退職金等を差し引いて「不足保障額」を表示します。教育費と公的保障は統計・制度を使った概算です。児童手当は2026年制度を年齢別に自動計算します。児童扶養手当・養育費・その他の現在収入は、現在の生活費を推計するためにのみ使用し、世帯主死亡後も継続するとは限らないため不足保障額からは自動控除しません。教育費は幼稚園～高校を文部科学省「令和5年度子供の学習費調査」訂正版、大学等の学費は令和7年度学生納付金調査・国立大学標準額を基礎にしています。大学等で「自宅外」を選んだ場合は、JASSO学生生活調査の自宅通学との差額を平均的な追加生活費として加算します。高校は授業料だけでなく学校外活動費等も含む平均的な家庭負担を使用しているため、「無償化＝0円」とはしていません。</div>
 <div class="actions"><button class="secondary" onclick="window.print()">結果をPDF保存／印刷</button><button class="secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">条件を見直す</button></div>
 </section>
 
@@ -519,27 +522,29 @@ function currentHouseholdIncome(){
  const salaryGrossAnnualMan=N('headGrossIncome')+(N('hasSp')===1?N('spGrossIncome'):0);
  const salaryTakehomeAnnualMan=salaryGrossAnnualMan*rate;
 
+ const childAllowanceMonthlyYen=childAllowanceNow();
  const jfaMonthlyYen=currentJfaMonthly();
  const supportMonthlyYen=currentSupportMonthly();
  const otherMonthlyYen=currentOtherMonthly();
+ const childAllowanceAnnualMan=childAllowanceMonthlyYen*12/10000;
  const jfaAnnualMan=jfaMonthlyYen*12/10000;
  const supportAnnualMan=supportMonthlyYen*12/10000;
  const otherAnnualMan=otherMonthlyYen*12/10000;
 
  // 額面上の世帯収入（確認表示用）
- const grossHouseholdAnnualMan=salaryGrossAnnualMan+jfaAnnualMan+supportAnnualMan+otherAnnualMan;
+ const grossHouseholdAnnualMan=salaryGrossAnnualMan+childAllowanceAnnualMan+jfaAnnualMan+supportAnnualMan+otherAnnualMan;
 
  // 実際の生活費原資：
- // 給与だけ手取り換算し、児童扶養手当・養育費・その他収入は100%加算する。
+ // 給与だけ手取り換算し、児童手当・児童扶養手当・養育費・その他収入は100%加算する。
  const livingIncomeAnnualMan=
-   salaryTakehomeAnnualMan+jfaAnnualMan+supportAnnualMan+otherAnnualMan;
+   salaryTakehomeAnnualMan+childAllowanceAnnualMan+jfaAnnualMan+supportAnnualMan+otherAnnualMan;
  const totalMonthlyYen=livingIncomeAnnualMan*10000/12;
 
  return {
    salaryGrossAnnualMan,salaryTakehomeAnnualMan,
    grossEarnedAnnualMan:salaryGrossAnnualMan,
-   jfaMonthlyYen,supportMonthlyYen,otherMonthlyYen,
-   jfaAnnualMan,supportAnnualMan,otherAnnualMan,
+   childAllowanceMonthlyYen,jfaMonthlyYen,supportMonthlyYen,otherMonthlyYen,
+   childAllowanceAnnualMan,jfaAnnualMan,supportAnnualMan,otherAnnualMan,
    grossHouseholdAnnualMan,livingIncomeAnnualMan,
    earnedMonthlyYen:salaryTakehomeAnnualMan*10000/12,
    totalMonthlyYen
@@ -570,15 +575,17 @@ function updateLivingCalc(){
  const earnedRemainderMonthlyYen=Math.max(0,
    inc.earnedMonthlyYen-housingMonthlyYen-educationMonthlyYen-savingMonthlyYen
  );
- const singleParentCashMonthlyYen=
-   inc.jfaMonthlyYen+inc.supportMonthlyYen+inc.otherMonthlyYen;
- const rawLivingMonthlyYen=earnedRemainderMonthlyYen+singleParentCashMonthlyYen;
+ const benefitCashMonthlyYen=
+   inc.childAllowanceMonthlyYen+inc.jfaMonthlyYen+inc.supportMonthlyYen+inc.otherMonthlyYen;
+ const rawLivingMonthlyYen=earnedRemainderMonthlyYen+benefitCashMonthlyYen;
  const autoLivingMonthlyYen=rawLivingMonthlyYen;
  const autoLivingMan=autoLivingMonthlyYen/10000;
  const finalLivingMan=mode==='manual'?Math.max(0,N('livingManualValue')):autoLivingMan;
 
  const put=(id,val)=>{const el=$(id);if(el)el.textContent=val};
  put('earnedNetDisplay',inc.salaryTakehomeAnnualMan.toFixed(1));
+ put('childAllowanceIncomeDisplay',inc.childAllowanceAnnualMan.toFixed(1));
+ put('childAllowanceMonthlyDisplay',Math.round(inc.childAllowanceMonthlyYen).toLocaleString('ja-JP'));
  put('jfaIncomeDisplay',(inc.jfaMonthlyYen*12/10000).toFixed(1));
  put('supportIncomeDisplay',(inc.supportMonthlyYen*12/10000).toFixed(1));
  put('otherCurrentIncomeDisplay',(inc.otherMonthlyYen*12/10000).toFixed(1));
@@ -595,6 +602,7 @@ function updateLivingCalc(){
  put('livingSalaryGrossAnnual',inc.salaryGrossAnnualMan.toFixed(1));
  put('livingSalaryTakehomeAnnual',inc.salaryTakehomeAnnualMan.toFixed(1));
  put('livingHouseholdGrossAnnual',inc.grossHouseholdAnnualMan.toFixed(1));
+ put('livingChildAllowanceAnnual',inc.childAllowanceAnnualMan.toFixed(1));
  put('livingJfaAnnual',inc.jfaAnnualMan.toFixed(1));
  put('livingSupportAnnual',inc.supportAnnualMan.toFixed(1));
  put('livingOtherAnnual',inc.otherAnnualMan.toFixed(1));
@@ -604,7 +612,8 @@ function updateLivingCalc(){
  put('livingEducationAnnual',educationAnnualMan.toFixed(1));
  put('livingSavingAnnual',savingAnnualMan.toFixed(1));
  put('livingEarnedRemainder',(earnedRemainderMonthlyYen*12/10000).toFixed(1));
- put('livingSingleParentCash',(singleParentCashMonthlyYen*12/10000).toFixed(1));
+ put('livingSingleParentCash',(benefitCashMonthlyYen*12/10000).toFixed(1));
+ put('livingChildAllowanceActual',inc.childAllowanceAnnualMan.toFixed(1));
  put('livingJfaActual',(inc.jfaMonthlyYen*12/10000).toFixed(1));
  put('livingSupportActual',(inc.supportMonthlyYen*12/10000).toFixed(1));
  put('livingOtherActual',(inc.otherMonthlyYen*12/10000).toFixed(1));
@@ -625,8 +634,9 @@ function updateLivingCalc(){
 
  let w=$('livingCalcWarning');
  if(w){
-   w.classList.toggle('hidden',rawLivingMonthlyYen>=0);
-   w.textContent=rawLivingMonthlyYen<0?'現在の支出が家計収入を上回っています。各収入・支出を確認するか、「月額を直接入力」を選んでください。':'';
+   const earnedShortfall=inc.earnedMonthlyYen-housingMonthlyYen-educationMonthlyYen-savingMonthlyYen<0;
+   w.classList.toggle('hidden',!earnedShortfall);
+   w.textContent=earnedShortfall?'給与等の推計手取りより、住宅費・教育費・貯蓄の合計が大きくなっています。入力内容を確認するか、「月額を直接入力」を選んでください。':'';
  }
 }
 function chooseLifeMode(){ updateLifeHint(); }
@@ -1343,7 +1353,7 @@ document.addEventListener('input',(ev)=>{
 });
 
 document.addEventListener('change',(ev)=>{
- if(/^(elem|mid|high|post|currentPost|grad|vocYears)\d+$/.test(ev.target.id||'')){updateBenefits();}
+ if(/^(elem|mid|high|post|currentPost|grad|vocYears)\d+$/.test(ev.target.id||'')){updateBenefits();updateLivingCalc();}
 });
 
 function refreshSingleParentIncomeUI(){
