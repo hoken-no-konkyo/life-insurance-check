@@ -85,6 +85,36 @@ label > select{
   .input-unit-row input{width:130px!important;max-width:55vw!important;min-width:0!important}
   .input-unit-row span{white-space:nowrap!important;font-size:14px}
 }
+
+/* Ver.24.23: result housing presentation + compact print/PDF */
+.housing-result-breakdown{margin:8px 0 14px;padding:10px 12px;background:#f7faf9;border:1px solid var(--ln);border-radius:10px;color:var(--m);font-size:12px;line-height:1.55}
+@media(max-width:520px){.housing-result-breakdown{margin-top:7px;padding:9px 10px;font-size:11.5px}}
+@media print{
+ @page{size:A4;margin:9mm}
+ body{background:#fff!important;font-size:9.5pt}
+ body *{visibility:hidden!important}
+ #result,#result *{visibility:visible!important}
+ #result{display:block!important;position:absolute!important;left:0;top:0;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important}
+ #result h2{font-size:16pt;margin:0 0 5mm}
+ #result .big{font-size:25pt;margin:2mm 0 4mm}
+ #result .kpis{gap:3mm;margin:3mm 0}
+ #result .kpi{padding:2.5mm}
+ #result .kpi strong{font-size:14pt}
+ #result .section{margin-top:4mm;font-size:11pt}
+ #result .row{padding:1.6mm 0;font-size:9pt}
+ #result .notice{padding:2.5mm 3mm;margin-top:3mm;font-size:8.5pt;line-height:1.35}
+ #result .housing-result-breakdown{padding:2mm 3mm;margin:2mm 0 3mm;font-size:8pt}
+ #result .chart{margin-top:3mm}
+ #result .barrow{margin:2mm 0}
+ #result .barlabel{font-size:8.5pt;margin-bottom:1mm}
+ #result .track{height:2.5mm}
+ #result .sourcebox{font-size:7.5pt;line-height:1.35;padding:2.5mm;margin-top:3mm}
+ #result .actions{display:none!important}
+ #result .status{padding:2.5mm;margin:2mm 0}
+ #result #edetail .child{padding:2.5mm;margin:2mm 0;font-size:8pt;break-inside:avoid}
+ #result #edetail .row{padding:1mm 0}
+ #result{page-break-after:auto}
+}
 </style><style>
 .birth-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
 .birth-row input{display:inline-block!important;margin:0!important;text-align:center}.birth-year{width:82px!important;min-width:82px!important}.birth-md{width:58px!important;min-width:58px!important}
@@ -400,7 +430,7 @@ label > select{
 <section class="card result" id="result" style="display:none"><h2>診断結果</h2><div class="muted">現在の保障・資産などを差し引いた</div><div class="big"><span id="need">0</span>万円</div>
 <div id="coverageStatus" class="status"></div>
 <div class="kpis"><div class="kpi"><small>必要資金総額</small><strong><span id="totalNeed">0</span>万円</strong></div><div class="kpi"><small>準備済み・見込めるお金</small><strong><span id="totalOffset">0</span>万円</strong></div></div>
-<div id="familyLogic" class="notice"></div><div class="section">必要なお金</div><div class="row"><span>生活費</span><b><span id="rl"></span>万円</b></div><div class="row"><span>教育費</span><b><span id="re"></span>万円</b></div><div id="edetail"></div><div class="row"><span>住居費</span><b><span id="rh"></span>万円</b></div><div class="muted" id="housingBreakdown" style="margin:-4px 0 10px 14px;font-size:12px"></div><div class="row"><span>葬儀・身辺整理費</span><b><span id="ro"></span>万円</b></div><div class="section">差し引けるお金</div><div class="row"><span>配偶者収入</span><b>▲<span id="rsp"></span>万円</b></div><div class="row"><span>配偶者自身の老齢年金（65歳以降・概算）</span><b>▲<span id="rsop"></span>万円</b></div><div class="row"><span>遺族基礎年金</span><b>▲<span id="rb"></span>万円</b></div><div class="row"><span>遺族厚生年金（概算）</span><b>▲<span id="rk"></span>万円</b></div><div class="row"><span>中高齢寡婦加算（該当時・概算）</span><b>▲<span id="rw"></span>万円</b></div><div class="row"><span>児童手当（今後・概算）</span><b>▲<span id="rca"></span>万円</b></div>
+<div id="familyLogic" class="notice"></div><div class="section">必要なお金</div><div class="row"><span>生活費</span><b><span id="rl"></span>万円</b></div><div class="row"><span>教育費</span><b><span id="re"></span>万円</b></div><div id="edetail"></div><div class="row"><span>住居費</span><b><span id="rh"></span>万円</b></div><div class="housing-result-breakdown" id="housingBreakdown"></div><div class="row"><span>葬儀・身辺整理費</span><b><span id="ro"></span>万円</b></div><div class="section">差し引けるお金</div><div class="row"><span>配偶者収入</span><b>▲<span id="rsp"></span>万円</b></div><div class="row"><span>配偶者自身の老齢年金（65歳以降・概算）</span><b>▲<span id="rsop"></span>万円</b></div><div class="row"><span>遺族基礎年金</span><b>▲<span id="rb"></span>万円</b></div><div class="row"><span>遺族厚生年金（概算）</span><b>▲<span id="rk"></span>万円</b></div><div class="row"><span>中高齢寡婦加算（該当時・概算）</span><b>▲<span id="rw"></span>万円</b></div><div class="row"><span>児童手当（今後・概算）</span><b>▲<span id="rca"></span>万円</b></div>
 <div class="row"><span>児童扶養手当（確認済み額から計算）</span><b>▲<span id="rjfa"></span>万円</b></div>
 <div class="row"><span>養育費・その他の継続収入</span><b>▲<span id="rotherinc"></span>万円</b></div>
 <div class="row"><span>資産</span><b>▲<span id="ra"></span>万円</b></div><div class="row"><span>死亡保険金</span><b>▲<span id="ri"></span>万円</b></div><div class="row"><span>死亡退職金等</span><b>▲<span id="rr"></span>万円</b></div>
