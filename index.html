@@ -816,13 +816,19 @@ function spouseAfterAnnualNet(){
  return N('spGrossIncome')*netRateValue();
 }
 function spinc(){return spouseAfterAnnualNet()*Math.max(0,N('spRetire')-N('spAge'))}
-function spouseOldAgePensionAnnual(){
- if(N('hasSp')!==1)return 0;
- if(($('spPensionMode')?.value||'estimate')==='known')return N('spOldPension');
+function spouseOldAgePensionParts(){
+ if(N('hasSp')!==1)return {basic:0,kosei:0,total:0,known:false};
+ if(($('spPensionMode')?.value||'estimate')==='known'){
+   // ねんきん定期便等の合計額しか分からない場合は、65歳以降の併給調整を安全側に簡易処理するため
+   // 基礎年金相当額を上限84.73万円として分離し、残りを老齢厚生年金相当額とみなす。
+   const total=Math.max(0,N('spOldPension'));
+   const basic=Math.min(84.73,total);
+   const kosei=Math.max(0,total-basic);
+   return {basic,kosei,total,known:true};
+ }
  let age=N('spAge');
  let gapMode=$('spPensionGapMode')?.value||'none';
  let gapYears=gapMode==='yes'?N('spPensionGapYears'):0;
- // 65歳時点を想定。今後60歳までは未納がない簡易前提。
  let basicYears=Math.max(0,40-gapYears);
  let basic=84.73*Math.min(40,basicYears)/40;
  let pastYears=N('spKoseiYears');
@@ -830,7 +836,23 @@ function spouseOldAgePensionAnnual(){
  let kYears=Math.max(0,pastYears+futureYears);
  let avg=N('spAvgAnnualPay');
  let kosei=(avg>0&&kYears>0)?(avg/12)*5.481/1000*(kYears*12):0;
- return basic+kosei;
+ return {basic,kosei,total:basic+kosei,known:false};
+}
+function spouseOldAgePensionAnnual(){return spouseOldAgePensionParts().total}
+function survivorKoseiEntitlement65Annual(){
+ if(N('hasSp')!==1)return 0;
+ const deceasedRP=kpAnnual()/0.75; // kpAnnual は報酬比例部分×3/4
+ if(!Number.isFinite(deceasedRP)||deceasedRP<=0)return 0;
+ const own=spouseOldAgePensionParts().kosei;
+ // 65歳以上の遺族厚生年金額：3/4方式と、死亡者1/2＋本人老厚1/2方式の高い方。
+ return Math.max(deceasedRP*0.75,deceasedRP*0.5+own*0.5);
+}
+function pension65CombinedAnnual(){
+ if(N('hasSp')!==1)return 0;
+ const p=spouseOldAgePensionParts();
+ const survivor=survivorKoseiEntitlement65Annual();
+ // 老齢基礎は遺族厚生と併給可。老齢厚生は全額支給し、遺族厚生は老齢厚生相当額を停止。
+ return p.basic+p.kosei+Math.max(0,survivor-p.kosei);
 }
 function updatePensionConditionalFields(){
  let hy=N('koseiYears'), sy=N('spKoseiYears');
@@ -846,14 +868,13 @@ function updatePensionUi(){
    $('spPensionEstimate')?.classList.toggle('hidden',mode.value!=='estimate');
  }
  let gm=$('spPensionGapMode'); if(gm&&$('spPensionGapDetail'))$('spPensionGapDetail').classList.toggle('hidden',gm.value!=='yes');
- let out=$('spPensionEstimateResult'); if(out&&(!mode||mode.value==='estimate')) out.innerHTML='<b>概算：'+spouseOldAgePensionAnnual().toFixed(1)+'万円／年</b><br><span class="muted">65歳以降の老齢基礎年金＋老齢厚生年金の簡易目安</span>';
+ let out=$('spPensionEstimateResult'); if(out&&(!mode||mode.value==='estimate')) out.innerHTML='<b>概算：'+spouseOldAgePensionAnnual().toFixed(1)+'万円／年</b><br><span class="muted">65歳以降の本人の老齢年金の簡易目安（遺族厚生年金との調整は診断時に反映）</span>';
 }
 function spouseOldAgePensionRemainingAt(years=0){
  if(N('hasSp')!==1)return 0;
- let annual=spouseOldAgePensionAnnual();if(annual<=0)return 0;
+ let annual=pension65CombinedAnnual();if(annual<=0)return 0;
  let age=N('spAge')+years;
- let horizon=0;
- horizon=Math.max(0,lifeExp(age,$('spSex').value));
+ let horizon=Math.max(0,lifeExp(age,$('spSex').value));
  let startDelay=Math.max(0,65-age);
  let pensionYears=Math.max(0,horizon-startDelay);
  return annual*pensionYears;
@@ -1212,7 +1233,7 @@ function drawFuture(current){
  // 現在も同じ「その時点から先の残存必要資金」ロジックで揃える。
  let vals=years.map(y=>futureNeedAt(y)),max=Math.max(1,...vals);
  $('futureChart').innerHTML=years.map((y,j)=>`<div class="barrow"><div class="barlabel"><span>${y===0?'現在':y+'年後'}</span><b>${F(vals[j])}万円</b></div><div class="track"><div class="fill" style="width:${Math.max(vals[j]?3:0,vals[j]/max*100)}%"></div></div></div>`).join('')+
- '<small>※各時点で万が一が起きた場合に、その時点から先に残る生活費・教育費・住居費等を積み上げ、残りの公的保障・配偶者収入・配偶者自身の老齢年金（入力時）・現在入力されている資産等を差し引いた参考シナリオです。大学等の将来費用も現在時点から残存必要資金に含めます。物価・運用益・制度変更・将来の資産増減は反映していません。</small>';
+ '<small>※各時点で万が一が起きた場合に、その時点から先に残る生活費・教育費・住居費等を積み上げ、残りの公的保障・配偶者収入・65歳以降の配偶者年金等（併給調整後）・現在入力されている資産等を差し引いた参考シナリオです。大学等の将来費用も現在時点から残存必要資金に含めます。物価・運用益・制度変更・将来の資産増減は反映していません。</small>';
 }
 
 function jumpToId(id){
